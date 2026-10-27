@@ -2,7 +2,11 @@ name: APK yig'ish
 
 on:
   push:
+    branches: [main]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -40,3 +44,19 @@ jobs:
         with:
           name: Pulnoma-APK
           path: Pulnoma.apk
+
+      - name: Releases bo'limiga joylash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest Pulnoma.apk --title "Pulnoma — oxirgi versiya" --notes "Telefonga o'rnatish uchun Pulnoma.apk faylini yuklab oling." --latest
+
+      - name: APK'ni apk shoxchasiga saqlash
+        run: |
+          mkdir -p "$RUNNER_TEMP/apkb" && cp Pulnoma.apk "$RUNNER_TEMP/apkb/"
+          cd "$RUNNER_TEMP/apkb"
+          git init -q -b apk
+          git -c user.name=github-actions -c user.email=actions@github.com add Pulnoma.apk
+          git -c user.name=github-actions -c user.email=actions@github.com commit -qm "APK ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" apk
