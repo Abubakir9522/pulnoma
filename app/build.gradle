@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'uz.mojal.pulnoma'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'uz.mojal.pulnoma'
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // Imzo kaliti GitHub Secrets orqali beriladi (repozitoriyda saqlanmaydi).
+    def ksFile = System.getenv('PULNOMA_KEYSTORE')
+    signingConfigs {
+        release {
+            if (ksFile) {
+                storeFile file(ksFile)
+                storePassword System.getenv('PULNOMA_KEY_PASSWORD')
+                keyAlias 'pulnoma'
+                keyPassword System.getenv('PULNOMA_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig ksFile ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

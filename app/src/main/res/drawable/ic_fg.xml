@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- sakkiz qirrali yulduz (girih naqshi) -->
+    <path android:fillColor="@color/ic_gold" android:pathData="M54,30.5 L60.6,38.1 70.6,37.4 69.9,47.4 77.5,54 69.9,60.6 70.6,70.6 60.6,69.9 54,77.5 47.4,69.9 37.4,70.6 38.1,60.6 30.5,54 38.1,47.4 37.4,37.4 47.4,38.1 Z" />
+    <path android:fillColor="@color/ic_bg" android:pathData="M44,54 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0 Z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M49,54 a5,5 0 1,0 10,0 a5,5 0 1,0 -10,0 Z" />
+</vector>

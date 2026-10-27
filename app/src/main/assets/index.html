@@ -1,0 +1,1218 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f6f3ec">
+<title>Pulnoma</title>
+<style>
+:root{
+  --bg:#f6f3ec;--surface:#ffffff;--surface2:#efeae0;--ink:#1d2321;--muted:#6b716d;--line:#e3ddd1;
+  --brand:#0f766e;--brand2:#0b5c56;--brand-soft:#d7ece9;--accent:#c98a1b;--accent-soft:#f6e7c8;
+  --in:#1a8f5a;--out:#c2410c;--danger:#b42318;--warn:#b7791f;--shadow:0 1px 2px rgba(29,35,33,.06),0 4px 14px rgba(29,35,33,.06);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1413;--surface:#171e1c;--surface2:#1f2826;--ink:#eef2ef;--muted:#93a09b;--line:#2a3431;
+    --brand:#2bb3a3;--brand2:#1f8f83;--brand-soft:#173a36;--accent:#f0b54a;--accent-soft:#3a2f17;
+    --in:#3ccf8e;--out:#ff8a5c;--danger:#ff6b5b;--warn:#f0b54a;--shadow:none;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1413;--surface:#171e1c;--surface2:#1f2826;--ink:#eef2ef;--muted:#93a09b;--line:#2a3431;
+  --brand:#2bb3a3;--brand2:#1f8f83;--brand-soft:#173a36;--accent:#f0b54a;--accent-soft:#3a2f17;
+  --in:#3ccf8e;--out:#ff8a5c;--danger:#ff6b5b;--warn:#f0b54a;--shadow:none;color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}
+body{font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+input,textarea,select,button{font:inherit;color:inherit}
+input,textarea{-webkit-user-select:text;user-select:text}
+button{background:none;border:0;padding:0;cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+#app{max-width:520px;margin:0 auto;min-height:100vh;padding-bottom:96px}
+h1{font-size:24px;margin:0;letter-spacing:-.02em}
+h3{font-size:16px;margin:0}
+.muted{color:var(--muted)}
+.top{display:flex;align-items:center;justify-content:space-between;padding:18px 16px 10px;gap:12px}
+.hello{font-weight:700;font-size:19px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:13px}
+.icon-btn{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--line)}
+.icon-btn svg{width:20px;height:20px}
+.hero{margin:6px 16px 0;border-radius:24px;padding:20px 20px 16px;color:#fff;position:relative;overflow:hidden;
+  background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.11' stroke-width='1.2'%3E%3Cpath d='M28 6l6.5 15.5L50 28l-15.5 6.5L28 50l-6.5-15.5L6 28l15.5-6.5z'/%3E%3Crect x='18' y='18' width='20' height='20' transform='rotate(45 28 28)'/%3E%3C/g%3E%3C/svg%3E");}
+:root[data-theme="dark"] .hero{background-color:#12534d}
+.hero-lbl{font-size:13px;opacity:.85}
+.hero-amt{font-size:32px;font-weight:800;letter-spacing:-.02em;margin-top:2px;line-height:1.15;word-break:break-word}
+.hero-usd{font-size:13px;opacity:.8;margin-top:2px}
+.hero-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.hero-row>div{background:rgba(255,255,255,.12);border-radius:14px;padding:9px 12px;font-size:12px}
+.hero-row b{display:block;font-size:15px;margin-top:2px}
+.sec-h{display:flex;align-items:center;justify-content:space-between;padding:22px 16px 10px}
+.link{color:var(--brand);font-weight:600;font-size:14px}
+.wallets{display:flex;gap:10px;overflow-x:auto;padding:0 16px 4px;scrollbar-width:none}
+.wallets::-webkit-scrollbar{display:none}
+.wcard{flex:0 0 150px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px;text-align:left;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.wcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--wc,var(--brand))}
+.wcard .wi{font-size:20px}
+.wcard .wn{font-size:13px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wcard .wb{font-weight:700;font-size:15px;margin-top:1px;white-space:nowrap}
+.wcard.add{display:grid;place-items:center;color:var(--brand);font-weight:700;border-style:dashed;box-shadow:none;background:transparent}
+.wcard.add::before{display:none}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;margin:0 16px 12px;padding:14px 16px;box-shadow:var(--shadow)}
+.card h4{margin:0 0 10px;font-size:15px}
+.tile-row{display:flex;align-items:center;gap:12px}
+.tile-ico{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:20px;flex:0 0 42px}
+.list{margin:0 16px}
+.day-h{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:12px 4px 6px;font-weight:600;text-transform:none}
+.tx{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:6px;width:100%;text-align:left}
+.tx .t1{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .t2{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx .mid{flex:1;min-width:0}
+.tx .amt{font-weight:700;font-size:14.5px;white-space:nowrap}
+.in{color:var(--in)} .out{color:var(--out)} .tr{color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:36px 24px}
+.empty .big{font-size:40px;margin-bottom:6px}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);align-items:end;height:66px;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav.bottom button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted);height:100%;justify-content:center;font-weight:600}
+nav.bottom button svg{width:22px;height:22px}
+nav.bottom button.on{color:var(--brand)}
+nav.bottom .fab{position:relative}
+nav.bottom .fab span{position:absolute;top:-22px;width:58px;height:58px;border-radius:20px;background:var(--brand);color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(15,118,110,.35);transform:rotate(45deg)}
+nav.bottom .fab span svg{transform:rotate(-45deg);width:26px;height:26px}
+.seg{display:flex;background:var(--surface2);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;padding:8px 10px;border-radius:10px;font-weight:600;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.seg.wide{margin:0 16px 12px}
+.month-sw{display:flex;align-items:center;justify-content:space-between;margin:0 16px 12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px}
+.month-sw button{width:40px;height:36px;border-radius:12px;font-size:20px;color:var(--brand)}
+.month-sw b{font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.chip.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+.hscroll{display:flex;gap:8px;overflow-x:auto;padding:0 16px 10px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll .chip{flex:0 0 auto}
+.search{margin:0 16px 10px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 12px}
+.search input{flex:1;border:0;background:none;padding:11px 0;outline:none}
+.search svg{width:18px;height:18px;color:var(--muted)}
+/* overlays */
+#scrim{position:fixed;inset:0;background:rgba(10,15,14,.45);opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
+#scrim.on{opacity:1;pointer-events:auto}
+#sheet{position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;max-height:94vh;background:var(--surface);border-radius:24px 24px 0 0;transform:translateY(105%);transition:transform .25s cubic-bezier(.2,.8,.2,1);z-index:31;display:flex;flex-direction:column}
+#sheet.on{transform:none}
+.sh-head{display:flex;align-items:center;gap:10px;padding:14px 16px 10px}
+.sh-head h3{flex:1;font-size:18px}
+.sh-body{overflow-y:auto;padding:4px 16px 16px;flex:1;-webkit-overflow-scrolling:touch}
+.sh-foot{padding:10px 16px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.close{width:36px;height:36px;border-radius:12px;background:var(--surface2);display:grid;place-items:center;flex:0 0 36px}
+.close svg{width:18px;height:18px}
+#page{position:fixed;top:0;bottom:0;left:0;right:0;max-width:520px;margin:0 auto;background:var(--bg);z-index:20;transform:translateX(105%);transition:transform .25s cubic-bezier(.2,.8,.2,1);overflow-y:auto;padding-bottom:40px}
+#page.on{transform:none}
+.pg-head{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;gap:10px;padding:14px 16px;z-index:2}
+.pg-head h2{flex:1;margin:0;font-size:20px}
+#modal{position:fixed;inset:0;display:none;place-items:center;z-index:40;background:rgba(10,15,14,.5);padding:24px}
+#modal.on{display:grid}
+.mbox{background:var(--surface);border-radius:22px;padding:20px;max-width:360px;width:100%}
+.mbox p{margin:6px 0 16px;color:var(--muted)}
+.mbtns{display:flex;gap:10px}
+.btn{flex:1;padding:13px 16px;border-radius:14px;font-weight:700;font-size:15px;text-align:center;display:block;width:100%}
+.btn.pri{background:var(--brand);color:#fff}
+.btn.sec{background:var(--surface2)}
+.btn.dng{background:transparent;color:var(--danger);border:1px solid var(--line)}
+.btn+.btn{margin-top:8px}
+.mbtns .btn+.btn{margin-top:0}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);background:#1d2321;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.2s;z-index:50;pointer-events:none;max-width:86vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%)}
+#toast.top{bottom:auto;top:calc(16px + env(safe-area-inset-top))}
+/* form */
+.lbl{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin:14px 0 8px;text-transform:uppercase;letter-spacing:.04em}
+.field{display:block;margin-top:12px}
+.field span{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);outline:none;font-size:15px}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.amt-disp{text-align:center;padding:10px 0 6px}
+.amt-disp .v{font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1.1;word-break:break-all}
+.amt-disp .c{font-size:14px;color:var(--muted);font-weight:600}
+.amt-disp .conv{font-size:13px;color:var(--muted);margin-top:4px}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cat{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 2px;border-radius:14px;border:1px solid transparent;font-size:11.5px;text-align:center;line-height:1.15;color:var(--ink)}
+.cat .ci{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:21px}
+.cat.on{border-color:var(--brand);background:var(--brand-soft)}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 12px calc(10px + env(safe-area-inset-bottom));background:var(--surface2)}
+.keypad button{height:50px;border-radius:14px;background:var(--surface);font-size:21px;font-weight:600}
+.keypad .ok{grid-row:span 2;height:auto;background:var(--brand);color:#fff;font-size:16px}
+.keypad .fn{background:transparent;color:var(--muted);font-size:17px}
+.bar{height:8px;border-radius:8px;background:var(--surface2);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:8px;background:var(--brand)}
+.bar i.warn{background:var(--warn)} .bar i.over{background:var(--danger)}
+.legend .li{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.legend .li:first-child{border-top:0}
+.legend .nm{flex:1;min-width:0}
+.legend .nm div{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.legend .pc{font-size:12px;color:var(--muted)}
+.donut-wrap{display:grid;place-items:center;position:relative;margin:4px 0 12px}
+.donut-c{position:absolute;text-align:center}
+.donut-c b{display:block;font-size:17px}
+.donut-c span{font-size:12px;color:var(--muted)}
+.bars{display:flex;align-items:flex-end;gap:2px;height:120px;padding-top:6px}
+.bars i{flex:1;background:var(--brand-soft);border-radius:4px 4px 2px 2px;min-height:2px}
+.bars i.has{background:var(--brand)}
+.bars i.td{background:var(--accent)}
+.bars-x{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.kpi{background:var(--surface2);border-radius:14px;padding:10px 12px}
+.kpi small{color:var(--muted);font-size:12px;display:block}
+.kpi b{font-size:15px}
+.menu .mi{display:flex;align-items:center;gap:14px;padding:12px 4px;border-top:1px solid var(--line);width:100%;text-align:left}
+.menu .mi:first-child{border-top:0}
+.menu .mi .tx2{flex:1}
+.menu .mi .tx2 div{font-weight:600}
+.menu .mi .tx2 small{color:var(--muted);font-size:12.5px}
+.chev{color:var(--muted);font-size:20px}
+.pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:8px;background:var(--surface2);color:var(--muted)}
+.pill.red{background:rgba(180,35,24,.12);color:var(--danger)}
+.pill.ok{background:rgba(26,143,90,.12);color:var(--in)}
+.pill.warn{background:var(--accent-soft);color:var(--warn)}
+.small-btn{padding:7px 12px;border-radius:10px;background:var(--brand);color:#fff;font-weight:700;font-size:13px}
+.small-btn.ghost{background:var(--surface2);color:var(--ink)}
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.emoji-grid button{height:40px;border-radius:10px;font-size:20px;border:1px solid transparent}
+.emoji-grid button.on{border-color:var(--brand);background:var(--brand-soft)}
+.color-row{display:flex;flex-wrap:wrap;gap:8px}
+.color-row button{width:32px;height:32px;border-radius:50%;border:3px solid transparent}
+.color-row button.on{border-color:var(--ink)}
+/* lock + onboarding */
+.full{position:fixed;inset:0;background:var(--bg);z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+.full.on{display:flex}
+.logo{width:72px;height:72px;border-radius:24px;background:var(--brand);display:grid;place-items:center;margin-bottom:14px}
+.logo svg{width:44px;height:44px}
+.dots{display:flex;gap:14px;margin:20px 0 26px}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--brand)}
+.dots i.f{background:var(--brand)}
+.shake{animation:sh .35s}
+@keyframes sh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pinpad{display:grid;grid-template-columns:repeat(3,72px);gap:14px}
+.pinpad button{height:72px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:26px;font-weight:600}
+.pinpad button.fn{background:none;border:0;font-size:15px;color:var(--muted)}
+.onb{width:100%;max-width:400px}
+.onb h1{font-size:30px;text-align:center}
+.onb .tag{text-align:center;color:var(--muted);margin:6px 0 18px}
+.feat{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:8px 0}
+.feat i{font-style:normal;font-size:18px}
+.note-box{font-size:13px;color:var(--muted);background:var(--surface2);border-radius:14px;padding:10px 12px;margin-top:12px}
+</style>
+</head>
+<body>
+<div id="app"><main id="main"></main></div>
+
+<nav class="bottom" id="nav">
+  <button data-act="view:home" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Asosiy</button>
+  <button data-act="view:history" data-v="history"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Tarix</button>
+  <button class="fab" data-act="tx-new" aria-label="Qoʻshish"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span></button>
+  <button data-act="view:stats" data-v="stats"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></svg>Hisobot</button>
+  <button data-act="view:more" data-v="more"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>Koʻproq</button>
+</nav>
+
+<div id="scrim" data-act="close-sheet"></div>
+<div id="sheet"></div>
+<div id="page"></div>
+<div id="modal"></div>
+<div id="toast"></div>
+<div id="lock" class="full"></div>
+<div id="onb" class="full"></div>
+<input type="file" id="fileIn" accept=".json,application/json,text/plain" style="display:none">
+
+<script>
+"use strict";
+/* ============ asosiy yordamchilar ============ */
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const KEY = 'pulnoma.v1';
+const A = window.Android || null;
+const MONTHS = ['Yanvar','Fevral','Mart','Aprel','May','Iyun','Iyul','Avgust','Sentabr','Oktabr','Noyabr','Dekabr'];
+const WD = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+const COLORS = ['#e07a1f','#d9480f','#f2b705','#8d6e63','#1c7ed6','#0ca678','#5f3dc4','#c2255c','#e03131','#3b5bdb','#f783ac','#ae3ec9','#2f9e44','#0b7285','#495057','#087f5b'];
+const EMOJIS = ['🛒','🍽️','🚕','⛽','💡','📶','🏠','👕','💊','📚','🧸','🎉','🎁','🏦','🎬','🤲','📦','💼','🏪','⭐','🔑','💰','💵','💳','💲','🐑','🚗','✈️','🕌','🍞','🥩','🍉','☕','🚌','🔧','🧾','📱','💻','🐄','🌾','🏋️','💇','🐾','🎓','🧹','🪙','🏥','🛠️'];
+
+let S = null;            // saqlanadigan holat
+const U = {               // interfeys holati
+  view: 'home', page: [], sheet: null, modal: null,
+  hMonth: null, hKind: 'all', hWallet: 'all', q: '',
+  sMonth: null, sKind: 'out', debtTab: 'gave'
+};
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function pad(n){ return String(n).padStart(2, '0'); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function dstr(d){ return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function today(){ return dstr(new Date()); }
+function mkey(ds){ return ds.slice(0, 7); }
+function parseD(ds){ const p = ds.split('-').map(Number); return new Date(p[0], p[1] - 1, p[2] || 1); }
+function monthLabel(mk){ const p = mk.split('-').map(Number); return MONTHS[p[1] - 1] + ' ' + p[0]; }
+function shiftMonth(mk, n){ const p = mk.split('-').map(Number); const d = new Date(p[0], p[1] - 1 + n, 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1); }
+function daysInMonth(mk){ const p = mk.split('-').map(Number); return new Date(p[0], p[1], 0).getDate(); }
+function dayLabel(ds){
+  const t = today();
+  if (ds === t) return 'Bugun';
+  const y = new Date(); y.setDate(y.getDate() - 1);
+  if (ds === dstr(y)) return 'Kecha';
+  const d = parseD(ds);
+  const yr = d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : '';
+  return d.getDate() + ' ' + MONTHS[d.getMonth()].toLowerCase() + yr + ', ' + WD[d.getDay()].toLowerCase();
+}
+function shortDate(ds){ if (!ds) return ''; const d = parseD(ds); return d.getDate() + ' ' + MONTHS[d.getMonth()].slice(0, 3).toLowerCase() + (d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''); }
+function grp(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+function fmt(n, cur){
+  cur = cur || 'UZS';
+  const neg = n < 0; n = Math.abs(n || 0);
+  let s;
+  if (cur === 'USD'){
+    const r = Math.round(n * 100) / 100, i = Math.floor(r), d = Math.round((r - i) * 100);
+    s = '$' + grp(i) + (d ? '.' + pad(d) : '');
+  } else s = grp(Math.round(n)) + ' soʻm';
+  return (neg ? '−' : '') + s;
+}
+function fmtB(n, cur){ return S && S.settings.hide ? '•••••' : fmt(n, cur); }
+function fmtK(n){
+  const a = Math.abs(n);
+  if (a >= 1e9) return (n / 1e9).toFixed(1).replace('.0', '') + ' mlrd';
+  if (a >= 1e6) return (n / 1e6).toFixed(1).replace('.0', '') + ' mln';
+  if (a >= 1e3) return Math.round(n / 1e3) + ' ming';
+  return String(Math.round(n));
+}
+function parseAmt(s){ const v = parseFloat(String(s || '').replace(/[\s ]/g, '').replace(',', '.')); return isFinite(v) ? v : 0; }
+function rate(){ return S.settings.rate || 12800; }
+function toUZS(a, cur){ return cur === 'USD' ? a * rate() : a; }
+function hash(s){ let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return 'h' + h.toString(36); }
+
+/* ============ holat ============ */
+function defState(){
+  const out = [
+    ['food','Oziq-ovqat','🛒','#e07a1f'],['cafe','Kafe va restoran','🍽️','#d9480f'],['taxi','Transport, taksi','🚕','#f2b705'],
+    ['fuel','Benzin, metan','⛽','#8d6e63'],['util','Kommunal xizmatlar','💡','#1c7ed6'],['phone','Aloqa, internet','📶','#0ca678'],
+    ['home','Uy-joy, ijara','🏠','#5f3dc4'],['cloth','Kiyim-kechak','👕','#c2255c'],['health','Salomatlik, dori','💊','#e03131'],
+    ['edu','Taʼlim, kurslar','📚','#3b5bdb'],['kids','Bolalar','🧸','#f783ac'],['toy','Toʻy, marosimlar','🎉','#ae3ec9'],
+    ['gift','Sovgʻalar','🎁','#d6336c'],['credit','Kredit, nasiya','🏦','#495057'],['fun','Dam olish','🎬','#2b8a3e'],
+    ['sadaqa','Xayriya, sadaqa','🤲','#087f5b'],['other','Boshqa','📦','#868e96']
+  ].map(c => ({id:c[0], name:c[1], icon:c[2], color:c[3], kind:'out'}));
+  const inc = [
+    ['salary','Maosh','💼','#2f9e44'],['biz','Biznes, savdo','🏪','#0b7285'],['bonus','Bonus, mukofot','⭐','#f59f00'],
+    ['giftin','Sovgʻa pul','🎁','#d6336c'],['rentin','Ijara daromadi','🔑','#5c7cfa'],['otherin','Boshqa kirim','💰','#868e96']
+  ].map(c => ({id:c[0], name:c[1], icon:c[2], color:c[3], kind:'in'}));
+  return {
+    v: 1,
+    settings: { name: '', theme: 'auto', rate: 12800, pin: null, hide: false },
+    wallets: [
+      {id:'cash', name:'Naqd pul', icon:'💵', color:'#2f9e44', cur:'UZS', start:0},
+      {id:'card', name:'Plastik karta', icon:'💳', color:'#1c7ed6', cur:'UZS', start:0},
+      {id:'usd',  name:'Dollar', icon:'💲', color:'#0f766e', cur:'USD', start:0}
+    ],
+    cats: out.concat(inc), tx: [], budgets: [], debts: [], recurring: [], lastWallet: 'cash'
+  };
+}
+function load(){
+  try { const r = localStorage.getItem(KEY); if (r) S = JSON.parse(r); } catch (e) { S = null; }
+  if (S && (!S.wallets || !S.cats)) S = null;
+}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { toast('Saqlashda xatolik'); } }
+
+const W = id => S.wallets.find(w => w.id === id);
+const C = id => S.cats.find(c => c.id === id) || {id:'?', name:'Oʻchirilgan', icon:'❔', color:'#868e96', kind:'out'};
+
+function balances(){
+  const b = {};
+  S.wallets.forEach(w => b[w.id] = +w.start || 0);
+  S.tx.forEach(t => {
+    if (t.kind === 'in') b[t.wallet] = (b[t.wallet] || 0) + t.amount;
+    else if (t.kind === 'out') b[t.wallet] = (b[t.wallet] || 0) - t.amount;
+    else if (t.kind === 'tr'){ b[t.wallet] = (b[t.wallet] || 0) - t.amount; b[t.to] = (b[t.to] || 0) + (t.amount2 != null ? t.amount2 : t.amount); }
+  });
+  return b;
+}
+function totalUZS(b){ return S.wallets.reduce((s, w) => s + toUZS(b[w.id] || 0, w.cur), 0); }
+function txUZS(t){ const w = W(t.wallet); return toUZS(t.amount, w ? w.cur : 'UZS'); }
+function monthSum(mk, kind, cat){
+  return S.tx.reduce((s, t) => (t.kind === kind && mkey(t.date) === mk && (!cat || t.cat === cat)) ? s + txUZS(t) : s, 0);
+}
+function sortTx(list){ return list.slice().sort((a, b) => a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0)); }
+
+/* ============ mavzu ============ */
+function isDark(){
+  const t = S ? S.settings.theme : 'auto';
+  if (t === 'dark') return true;
+  if (t === 'light') return false;
+  try { if (A && A.isNight) return !!A.isNight(); } catch (e) {}
+  return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function applyTheme(){
+  const d = isDark();
+  document.documentElement.dataset.theme = d ? 'dark' : 'light';
+  const bg = d ? '#0f1413' : '#f6f3ec';
+  const m = $('meta[name=theme-color]'); if (m) m.content = bg;
+  try { if (A && A.setStatusBar) A.setStatusBar(bg, d); } catch (e) {}
+}
+window.onSystemTheme = () => { if (S && S.settings.theme === 'auto') applyTheme(); };
+if (window.matchMedia) try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', window.onSystemTheme); } catch (e) {}
+
+/* ============ ikonkalar ============ */
+const I = {
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  back: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+  eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18M10.6 5.1A10.6 10.6 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.6 0 3-.4 4.3-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  star: '<svg viewBox="0 0 48 48"><g fill="#f0b54a"><rect x="13" y="13" width="22" height="22" rx="2"/><rect x="13" y="13" width="22" height="22" rx="2" transform="rotate(45 24 24)"/></g><circle cx="24" cy="24" r="6.5" fill="#0f766e"/></svg>'
+};
+
+/* ============ toast / modal ============ */
+let toastT = null;
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.toggle('top', !!U.sheet); t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
+function confirmBox(title, text, okLabel, danger){
+  return new Promise(res => {
+    const m = $('#modal');
+    m.innerHTML = '<div class="mbox"><h3>' + esc(title) + '</h3><p>' + esc(text) + '</p><div class="mbtns"><button class="btn sec" id="mNo">Bekor qilish</button><button class="btn ' + (danger ? 'dng' : 'pri') + '" id="mOk" style="' + (danger ? 'background:var(--danger);color:#fff;border:0' : '') + '">' + esc(okLabel || 'Ha') + '</button></div></div>';
+    m.classList.add('on');
+    U.modal = () => { close(false); };
+    function close(v){ m.classList.remove('on'); m.innerHTML = ''; U.modal = null; res(v); }
+    $('#mNo').onclick = () => close(false);
+    $('#mOk').onclick = () => close(true);
+  });
+}
+
+/* ============ sheet / page ============ */
+function openSheet(html, mount){
+  const sh = $('#sheet');
+  sh.innerHTML = html;
+  sh.classList.add('on'); $('#scrim').classList.add('on');
+  U.sheet = true;
+  if (mount) mount(sh);
+}
+function closeSheet(){
+  $('#sheet').classList.remove('on'); $('#scrim').classList.remove('on');
+  U.sheet = null; U.draft = null;
+  setTimeout(() => { if (!U.sheet) $('#sheet').innerHTML = ''; }, 260);
+}
+function sheetHead(title){ return '<div class="sh-head"><h3>' + esc(title) + '</h3><button class="close" data-act="close-sheet" aria-label="Yopish">' + I.x + '</button></div>'; }
+function openPage(name){ U.page.push(name); renderPage(); $('#page').classList.add('on'); $('#page').scrollTop = 0; }
+function closePage(){
+  U.page.pop();
+  if (U.page.length) renderPage();
+  else { $('#page').classList.remove('on'); setTimeout(() => { if (!U.page.length) $('#page').innerHTML = ''; }, 260); }
+  renderView();
+}
+function pageHead(title, right){ return '<div class="pg-head"><button class="icon-btn" data-act="page-back" aria-label="Orqaga">' + I.back + '</button><h2>' + esc(title) + '</h2>' + (right || '') + '</div>'; }
+
+window.handleBack = function(){
+  if ($('#lock').classList.contains('on')) return false;
+  if (U.modal){ U.modal(); return true; }
+  if (U.sheet){ closeSheet(); return true; }
+  if (U.page.length){ closePage(); return true; }
+  if (U.view !== 'home'){ setView('home'); return true; }
+  return false;
+};
+
+/* ============ ko'rinishlar ============ */
+function setView(v){ U.view = v; renderView(); window.scrollTo(0, 0); }
+function renderView(){
+  if (!S) return;
+  $$('#nav [data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === U.view));
+  const m = $('#main');
+  if (U.view === 'home') m.innerHTML = vHome();
+  else if (U.view === 'history'){ m.innerHTML = vHistory(); renderHistList(); }
+  else if (U.view === 'stats') m.innerHTML = vStats();
+  else m.innerHTML = vMore();
+}
+function txRow(t){
+  const w = W(t.wallet) || {name:'?', cur:'UZS'};
+  let ico, title, sub, amt, cls;
+  if (t.kind === 'tr'){
+    const w2 = W(t.to) || {name:'?'};
+    ico = '<div class="tile-ico" style="background:var(--surface2)">🔁</div>';
+    title = 'Oʻtkazma'; sub = esc(w.name) + ' → ' + esc(w2.name) + (t.note ? ' · ' + esc(t.note) : '');
+    amt = fmt(t.amount, w.cur); cls = 'tr';
+  } else {
+    const c = C(t.cat);
+    ico = '<div class="tile-ico" style="background:' + c.color + '22">' + c.icon + '</div>';
+    title = esc(c.name); sub = esc(w.name) + (t.note ? ' · ' + esc(t.note) : '');
+    amt = (t.kind === 'in' ? '+' : '−') + fmt(t.amount, w.cur); cls = t.kind;
+  }
+  return '<button class="tx" data-act="tx:' + t.id + '">' + ico + '<div class="mid"><div class="t1">' + title + '</div><div class="t2">' + sub + '</div></div><div class="amt num ' + cls + '">' + amt + '</div></button>';
+}
+function txList(list, dayTotals){
+  if (!list.length) return '<div class="empty"><div class="big">🧾</div>Hozircha yozuvlar yoʻq.<br>Pastdagi <b>+</b> tugmasi bilan birinchi xarajatni kiriting.</div>';
+  let h = '', cur = null;
+  const totals = {};
+  if (dayTotals) list.forEach(t => { if (t.kind !== 'tr') totals[t.date] = (totals[t.date] || 0) + (t.kind === 'in' ? 1 : -1) * txUZS(t); });
+  list.forEach(t => {
+    if (t.date !== cur){
+      cur = t.date;
+      h += '<div class="day-h"><span>' + dayLabel(cur) + '</span>' + (dayTotals && totals[cur] ? '<span class="num">' + (totals[cur] > 0 ? '+' : '') + fmt(totals[cur]) + '</span>' : '') + '</div>';
+    }
+    h += txRow(t);
+  });
+  return '<div class="list">' + h + '</div>';
+}
+function recurringStatus(r){
+  const t = today(), mk = mkey(t);
+  if (r.lastPaid === mk) return {paid:true, days:99};
+  const day = Math.min(r.day, daysInMonth(mk));
+  return {paid:false, days: day - parseD(t).getDate(), date: mk + '-' + pad(day)};
+}
+function vHome(){
+  const b = balances(), total = totalUZS(b), mk = mkey(today());
+  const inc = monthSum(mk, 'in'), out = monthSum(mk, 'out');
+  const name = S.settings.name;
+  let h = '<header class="top"><div><div class="hello">Assalomu alaykum' + (name ? ', ' + esc(name) : '') + '!</div><div class="sub">' + dayLabel(today()).replace('Bugun', 'Bugun, ' + parseD(today()).getDate() + ' ' + MONTHS[parseD(today()).getMonth()].toLowerCase()) + '</div></div>' +
+    '<button class="icon-btn" data-act="hide" aria-label="Balansni yashirish">' + (S.settings.hide ? I.eyeOff : I.eye) + '</button></header>';
+  h += '<section class="hero"><div class="hero-lbl">Umumiy balans</div><div class="hero-amt num">' + fmtB(total) + '</div>' +
+    '<div class="hero-usd num">≈ ' + fmtB(total / rate(), 'USD') + ' · kurs ' + grp(rate()) + '</div>' +
+    '<div class="hero-row"><div>↓ Kirim, ' + MONTHS[parseD(today()).getMonth()].toLowerCase() + '<b class="num">' + fmtB(inc) + '</b></div><div>↑ Chiqim, ' + MONTHS[parseD(today()).getMonth()].toLowerCase() + '<b class="num">' + fmtB(out) + '</b></div></div></section>';
+  h += '<div class="sec-h"><h3>Hamyonlar</h3><button class="link" data-act="page:wallets">Boshqarish</button></div><div class="wallets">';
+  S.wallets.forEach(w => { h += '<button class="wcard" style="--wc:' + w.color + '" data-act="wallet:' + w.id + '"><div class="wi">' + w.icon + '</div><div class="wn">' + esc(w.name) + '</div><div class="wb num">' + fmtB(b[w.id] || 0, w.cur) + '</div></button>'; });
+  h += '<button class="wcard add" data-act="wallet-new">+ Hamyon</button></div>';
+
+  // byudjet ogohlantirishi
+  const alerts = S.budgets.map(bg => ({bg, spent: monthSum(mk, 'out', bg.cat === 'all' ? null : bg.cat)})).filter(x => x.spent >= x.bg.limit * 0.8);
+  // eslatmalar
+  const due = S.recurring.map(r => ({r, st: recurringStatus(r)})).filter(x => !x.st.paid && x.st.days <= 5).sort((a, b) => a.st.days - b.st.days);
+  if (alerts.length || due.length){
+    h += '<div class="sec-h"><h3>Diqqat</h3></div>';
+    due.forEach(x => {
+      const c = C(x.r.cat);
+      const lbl = x.st.days < 0 ? '<span class="pill red">' + (-x.st.days) + ' kun kechikdi</span>' : x.st.days === 0 ? '<span class="pill warn">Bugun</span>' : '<span class="pill">' + x.st.days + ' kundan keyin</span>';
+      h += '<div class="card"><div class="tile-row"><div class="tile-ico" style="background:' + c.color + '22">' + c.icon + '</div><div style="flex:1;min-width:0"><div style="font-weight:600">' + esc(x.r.name) + '</div><div class="sub num">' + fmt(x.r.amount, (W(x.r.wallet) || {}).cur) + ' · ' + lbl + '</div></div><button class="small-btn" data-act="rec-pay:' + x.r.id + '">Toʻlash</button></div></div>';
+    });
+    alerts.forEach(x => {
+      const over = x.spent > x.bg.limit;
+      const c = x.bg.cat === 'all' ? {icon:'📊', name:'Umumiy byudjet', color:'#0f766e'} : C(x.bg.cat);
+      h += '<button class="card" style="display:block;width:calc(100% - 32px);text-align:left" data-act="page:budgets"><div class="tile-row"><div class="tile-ico" style="background:' + c.color + '22">' + c.icon + '</div><div style="flex:1;min-width:0"><div style="font-weight:600">' + esc(c.name) + '</div><div class="sub">' + (over ? 'Limitdan ' + fmt(x.spent - x.bg.limit) + ' oshib ketdi' : 'Limitning ' + Math.round(x.spent / x.bg.limit * 100) + '% ishlatildi') + '</div></div><span class="pill ' + (over ? 'red' : 'warn') + '">' + Math.round(x.spent / x.bg.limit * 100) + '%</span></div></button>';
+    });
+  }
+  // qarz daftari
+  const ds = debtTotals();
+  h += '<div class="sec-h"><h3>Qarz daftari</h3><button class="link" data-act="page:debts">Ochish</button></div>';
+  h += '<button class="card" style="display:block;width:calc(100% - 32px);text-align:left" data-act="page:debts"><div class="kpis" style="margin:0"><div class="kpi"><small>Sizga qarzdor</small><b class="num in">' + fmtB(ds.gave) + '</b></div><div class="kpi"><small>Siz qarzdorsiz</small><b class="num out">' + fmtB(ds.took) + '</b></div></div></button>';
+
+  h += '<div class="sec-h"><h3>Oxirgi amallar</h3>' + (S.tx.length ? '<button class="link" data-act="view:history">Hammasi</button>' : '') + '</div>';
+  h += txList(sortTx(S.tx).slice(0, 8), false);
+  return h;
+}
+function vHistory(){
+  if (!U.hMonth) U.hMonth = mkey(today());
+  let h = '<header class="top"><h1>Tarix</h1></header>';
+  h += '<div class="search">' + I.search + '<input id="q" placeholder="Izoh yoki kategoriya boʻyicha qidirish" value="' + esc(U.q) + '" data-bind="q"></div>';
+  h += '<div class="month-sw"><button data-act="hm:-1" aria-label="Oldingi oy">‹</button><b>' + (U.hMonth === 'all' ? 'Barcha vaqt' : monthLabel(U.hMonth)) + '</b><button data-act="hm:1" aria-label="Keyingi oy">›</button></div>';
+  h += '<div class="hscroll">' + [['all','Hammasi'],['out','Chiqim'],['in','Kirim'],['tr','Oʻtkazma']].map(k => '<button class="chip' + (U.hKind === k[0] ? ' on' : '') + '" data-act="hk:' + k[0] + '">' + k[1] + '</button>').join('') +
+    '<button class="chip' + (U.hMonth === 'all' ? ' on' : '') + '" data-act="hm:all">Barcha vaqt</button></div>';
+  h += '<div class="hscroll"><button class="chip' + (U.hWallet === 'all' ? ' on' : '') + '" data-act="hw:all">Barcha hamyonlar</button>' + S.wallets.map(w => '<button class="chip' + (U.hWallet === w.id ? ' on' : '') + '" data-act="hw:' + w.id + '">' + w.icon + ' ' + esc(w.name) + '</button>').join('') + '</div>';
+  h += '<div id="histSum"></div><div id="histList"></div>';
+  return h;
+}
+function renderHistList(){
+  const q = U.q.trim().toLowerCase();
+  const list = sortTx(S.tx.filter(t =>
+    (U.hMonth === 'all' || mkey(t.date) === U.hMonth) &&
+    (U.hKind === 'all' || t.kind === U.hKind) &&
+    (U.hWallet === 'all' || t.wallet === U.hWallet || t.to === U.hWallet) &&
+    (!q || (t.note || '').toLowerCase().includes(q) || (t.kind !== 'tr' && C(t.cat).name.toLowerCase().includes(q)))
+  ));
+  let inc = 0, out = 0;
+  list.forEach(t => { if (t.kind === 'in') inc += txUZS(t); else if (t.kind === 'out') out += txUZS(t); });
+  $('#histSum').innerHTML = list.length ? '<div class="card" style="padding:10px 14px"><div class="kpis" style="margin:0"><div class="kpi"><small>Kirim</small><b class="num in">' + fmt(inc) + '</b></div><div class="kpi"><small>Chiqim</small><b class="num out">' + fmt(out) + '</b></div></div></div>' : '';
+  $('#histList').innerHTML = list.length ? txList(list, true) : '<div class="empty"><div class="big">🔍</div>Bu filtr boʻyicha yozuv topilmadi.</div>';
+}
+function donut(parts, total){
+  const r = 48, Cc = 2 * Math.PI * r;
+  let off = 0, segs = '';
+  parts.forEach(p => {
+    const len = total ? p.v / total * Cc : 0;
+    if (len > 0.5) segs += '<circle cx="60" cy="60" r="' + r + '" fill="none" stroke="' + p.color + '" stroke-width="16" stroke-dasharray="' + Math.max(len - 1.2, 0.3).toFixed(2) + ' ' + (Cc - Math.max(len - 1.2, 0.3)).toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '"/>';
+    off += len;
+  });
+  return '<svg width="190" height="190" viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="' + r + '" fill="none" stroke="var(--surface2)" stroke-width="16"/>' + segs + '</svg>';
+}
+function vStats(){
+  if (!U.sMonth) U.sMonth = mkey(today());
+  const mk = U.sMonth, kind = U.sKind;
+  const total = monthSum(mk, kind), prev = monthSum(shiftMonth(mk, -1), kind);
+  const byCat = {};
+  S.tx.forEach(t => { if (t.kind === kind && mkey(t.date) === mk) byCat[t.cat] = (byCat[t.cat] || 0) + txUZS(t); });
+  const parts = Object.keys(byCat).map(id => { const c = C(id); return {id, name:c.name, icon:c.icon, color:c.color, v:byCat[id]}; }).sort((a, b) => b.v - a.v);
+  const isCur = mk === mkey(today());
+  const nd = daysInMonth(mk), passed = isCur ? parseD(today()).getDate() : nd;
+  let h = '<header class="top"><h1>Hisobot</h1></header>';
+  h += '<div class="month-sw"><button data-act="sm:-1" aria-label="Oldingi oy">‹</button><b>' + monthLabel(mk) + '</b><button data-act="sm:1" aria-label="Keyingi oy">›</button></div>';
+  h += '<div class="seg wide"><button class="' + (kind === 'out' ? 'on' : '') + '" data-act="sk:out">Chiqimlar</button><button class="' + (kind === 'in' ? 'on' : '') + '" data-act="sk:in">Kirimlar</button></div>';
+  let diff = '';
+  if (prev > 0){ const p = Math.round((total - prev) / prev * 100); diff = (p > 0 ? '+' : '') + p + '%'; } else diff = '—';
+  const inc = monthSum(mk, 'in'), out = monthSum(mk, 'out');
+  h += '<div class="card"><div class="sub">' + (kind === 'out' ? 'Jami chiqim' : 'Jami kirim') + '</div><div class="num" style="font-size:28px;font-weight:800;letter-spacing:-.02em">' + fmt(total) + '</div>' +
+    '<div class="kpis"><div class="kpi"><small>Kunlik oʻrtacha</small><b class="num">' + fmt(total / Math.max(passed, 1)) + '</b></div><div class="kpi"><small>Oʻtgan oyga nisbatan</small><b class="num ' + (kind === 'out' ? (total > prev ? 'out' : 'in') : (total >= prev ? 'in' : 'out')) + '">' + diff + '</b></div>' +
+    '<div class="kpi"><small>Tejaldi (kirim − chiqim)</small><b class="num ' + (inc - out >= 0 ? 'in' : 'out') + '">' + fmt(inc - out) + '</b></div><div class="kpi"><small>Yozuvlar soni</small><b class="num">' + S.tx.filter(t => t.kind === kind && mkey(t.date) === mk).length + '</b></div></div></div>';
+  if (!parts.length){
+    h += '<div class="empty"><div class="big">📊</div>Bu oyda ' + (kind === 'out' ? 'chiqim' : 'kirim') + ' yozilmagan.</div>';
+  } else {
+    h += '<div class="card"><h4>Kategoriyalar boʻyicha</h4><div class="donut-wrap">' + donut(parts, total) + '<div class="donut-c"><b class="num">' + fmtK(total) + '</b><span>soʻm</span></div></div><div class="legend">';
+    parts.forEach(p => {
+      const pc = Math.round(p.v / total * 1000) / 10;
+      h += '<div class="li"><div class="tile-ico" style="background:' + p.color + '22;width:36px;height:36px;flex-basis:36px;font-size:18px;border-radius:12px">' + p.icon + '</div><div class="nm"><div>' + esc(p.name) + '</div><div class="bar" style="margin-top:5px;height:6px"><i style="width:' + pc + '%;background:' + p.color + '"></i></div></div><div style="text-align:right"><div class="num" style="font-weight:700;font-size:14px">' + fmt(p.v) + '</div><div class="pc">' + pc + '%</div></div></div>';
+    });
+    h += '</div></div>';
+    const days = new Array(nd).fill(0);
+    S.tx.forEach(t => { if (t.kind === kind && mkey(t.date) === mk) days[parseD(t.date).getDate() - 1] += txUZS(t); });
+    const mx = Math.max.apply(null, days) || 1, td = isCur ? parseD(today()).getDate() : -1;
+    h += '<div class="card"><h4>Kunlar boʻyicha</h4><div class="bars">' + days.map((v, i) => '<i class="' + (i + 1 === td ? 'td' : v ? 'has' : '') + '" style="height:' + Math.max(v / mx * 100, 2) + '%" title="' + (i + 1) + ': ' + fmt(v) + '"></i>').join('') + '</div><div class="bars-x"><span>1</span><span>10</span><span>20</span><span>' + nd + '</span></div><div class="sub" style="margin-top:8px">Eng koʻp: ' + (days.indexOf(mx) + 1) + '-kun, <b class="num">' + fmt(mx) + '</b></div></div>';
+  }
+  if (kind === 'out'){
+    h += '<div class="card"><h4>Byudjetlar</h4>' + (S.budgets.length ? budgetRows(mk, 3) : '<div class="sub">Oylik limit qoʻying — oshib ketsa, ilova ogohlantiradi.</div>') + '<button class="btn sec" style="margin-top:12px" data-act="page:budgets">' + (S.budgets.length ? 'Barcha byudjetlar' : 'Byudjet qoʻyish') + '</button></div>';
+  }
+  return h;
+}
+function budgetRows(mk, limit){
+  let h = '';
+  S.budgets.slice(0, limit || 99).forEach(bg => {
+    const c = bg.cat === 'all' ? {icon:'📊', name:'Umumiy (barcha chiqimlar)', color:'#0f766e'} : C(bg.cat);
+    const spent = monthSum(mk, 'out', bg.cat === 'all' ? null : bg.cat), pc = bg.limit ? spent / bg.limit * 100 : 0;
+    const cls = pc > 100 ? 'over' : pc >= 80 ? 'warn' : '';
+    const left = bg.limit - spent;
+    const isCur = mk === mkey(today());
+    const dleft = isCur ? daysInMonth(mk) - parseD(today()).getDate() + 1 : 0;
+    h += '<div style="padding:10px 0;border-top:1px solid var(--line)" ' + (limit ? '' : 'data-act="budget:' + bg.id + '"') + '><div class="tile-row" style="margin-bottom:8px"><div class="tile-ico" style="background:' + c.color + '22;width:36px;height:36px;flex-basis:36px;font-size:18px;border-radius:12px">' + c.icon + '</div><div style="flex:1;min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(c.name) + '</div><div class="sub num">' + fmt(spent) + ' / ' + fmt(bg.limit) + '</div></div><span class="pill ' + (cls === 'over' ? 'red' : cls === 'warn' ? 'warn' : 'ok') + '">' + Math.round(pc) + '%</span></div><div class="bar"><i class="' + cls + '" style="width:' + Math.min(pc, 100) + '%"></i></div>' +
+      (!limit ? '<div class="sub" style="margin-top:6px">' + (left >= 0 ? 'Qoldi: <b class="num">' + fmt(left) + '</b>' + (dleft > 0 ? ' · kuniga ~<b class="num">' + fmt(left / dleft) + '</b>' : '') : '<span style="color:var(--danger)">Limitdan <b class="num">' + fmt(-left) + '</b> oshdi</span>') + '</div>' : '') + '</div>';
+  });
+  return h;
+}
+function vMore(){
+  const items = [
+    ['budgets','📊','Byudjetlar','Oylik limitlar va ogohlantirishlar'],
+    ['debts','📒','Qarz daftari','Kimga berdingiz, kimdan oldingiz'],
+    ['recurring','🔔','Doimiy toʻlovlar','Ijara, internet, kredit — eslatma bilan'],
+    ['wallets','👛','Hamyonlar','Naqd, karta, dollar va boshqalar'],
+    ['cats','🏷️','Kategoriyalar','Oʻzingizga mos kategoriyalar'],
+    ['settings','⚙️','Sozlamalar va zaxira','Mavzu, kurs, PIN-kod, eksport'],
+    ['about','ℹ️','Ilova haqida','Pulnoma 1.0']
+  ];
+  return '<header class="top"><h1>Koʻproq</h1></header><div class="card menu">' + items.map(i => '<button class="mi" data-act="page:' + i[0] + '"><div class="tile-ico" style="background:var(--surface2)">' + i[1] + '</div><div class="tx2"><div>' + i[2] + '</div><small>' + i[3] + '</small></div><span class="chev">›</span></button>').join('') + '</div>';
+}
+
+/* ============ sahifalar ============ */
+function renderPage(){
+  const p = U.page[U.page.length - 1], el = $('#page');
+  let h = '';
+  if (p === 'wallets'){
+    const b = balances();
+    h = pageHead('Hamyonlar', '<button class="icon-btn" data-act="wallet-new" aria-label="Qoʻshish">' + I.plus + '</button>') + '<div class="card menu">' +
+      S.wallets.map(w => '<button class="mi" data-act="wallet:' + w.id + '"><div class="tile-ico" style="background:' + w.color + '22">' + w.icon + '</div><div class="tx2"><div>' + esc(w.name) + '</div><small>' + (w.cur === 'USD' ? 'AQSh dollari' : 'Soʻm') + '</small></div><b class="num">' + fmtB(b[w.id] || 0, w.cur) + '</b></button>').join('') +
+      '</div><div class="card"><div class="tile-row"><div style="flex:1"><div class="sub">Jami (soʻmda)</div><b class="num" style="font-size:20px">' + fmtB(totalUZS(b)) + '</b></div><button class="small-btn ghost" data-act="tx-new-tr">🔁 Oʻtkazma</button></div></div>';
+  } else if (p === 'cats'){
+    const sec = k => '<div class="card menu">' + S.cats.filter(c => c.kind === k).map(c => '<button class="mi" data-act="cat:' + c.id + '"><div class="tile-ico" style="background:' + c.color + '22">' + c.icon + '</div><div class="tx2"><div>' + esc(c.name) + '</div></div><span class="chev">›</span></button>').join('') + '</div>';
+    h = pageHead('Kategoriyalar', '<button class="icon-btn" data-act="cat-new" aria-label="Qoʻshish">' + I.plus + '</button>') + '<div class="sec-h" style="padding-top:4px"><h3>Chiqim</h3></div>' + sec('out') + '<div class="sec-h"><h3>Kirim</h3></div>' + sec('in');
+  } else if (p === 'budgets'){
+    const mk = mkey(today());
+    h = pageHead('Byudjetlar', '<button class="icon-btn" data-act="budget-new" aria-label="Qoʻshish">' + I.plus + '</button>');
+    h += '<div class="card"><div class="sub">' + monthLabel(mk) + ' · oy oxirigacha ' + (daysInMonth(mk) - parseD(today()).getDate() + 1) + ' kun</div>' +
+      (S.budgets.length ? budgetRows(mk) : '<div class="empty" style="padding:20px 0"><div class="big">🎯</div>Hali byudjet yoʻq. Masalan, “Kafe va restoran”ga oyiga 600 ming limit qoʻying.</div>') + '</div>';
+    h += '<div style="padding:0 16px"><button class="btn pri" data-act="budget-new">+ Byudjet qoʻshish</button></div>';
+  } else if (p === 'debts'){
+    const ds = debtTotals();
+    const list = S.debts.filter(d => d.dir === U.debtTab).sort((a, b) => (a.closed - b.closed) || ((a.due || '9999') < (b.due || '9999') ? -1 : 1));
+    h = pageHead('Qarz daftari', '<button class="icon-btn" data-act="debt-new" aria-label="Qoʻshish">' + I.plus + '</button>');
+    h += '<div class="card"><div class="kpis" style="margin:0"><div class="kpi"><small>Sizga qarzdor</small><b class="num in">' + fmt(ds.gave) + '</b></div><div class="kpi"><small>Siz qarzdorsiz</small><b class="num out">' + fmt(ds.took) + '</b></div></div></div>';
+    h += '<div class="seg wide"><button class="' + (U.debtTab === 'gave' ? 'on' : '') + '" data-act="dt:gave">Men berdim</button><button class="' + (U.debtTab === 'took' ? 'on' : '') + '" data-act="dt:took">Men oldim</button></div>';
+    if (!list.length) h += '<div class="empty"><div class="big">📒</div>' + (U.debtTab === 'gave' ? 'Hech kimga qarz bermagansiz.' : 'Sizda qarz yoʻq. Barakalla!') + '</div>';
+    else h += '<div class="list">' + list.map(d => {
+      const rem = debtRem(d), t = today();
+      let st = '';
+      if (d.closed) st = '<span class="pill ok">Yopilgan</span>';
+      else if (d.due && d.due < t) st = '<span class="pill red">Muddati oʻtdi</span>';
+      else if (d.due) st = '<span class="pill">' + shortDate(d.due) + ' gacha</span>';
+      return '<button class="tx" data-act="debt:' + d.id + '" style="' + (d.closed ? 'opacity:.6' : '') + '"><div class="tile-ico" style="background:var(--surface2)">' + (d.dir === 'gave' ? '🤝' : '🧾') + '</div><div class="mid"><div class="t1">' + esc(d.who) + '</div><div class="t2">' + shortDate(d.date) + (d.note ? ' · ' + esc(d.note) : '') + '</div><div style="margin-top:4px">' + st + '</div></div><div style="text-align:right"><div class="amt num ' + (d.dir === 'gave' ? 'in' : 'out') + '">' + fmt(rem, d.cur) + '</div>' + (rem !== d.amount ? '<div class="t2 num">' + fmt(d.amount, d.cur) + ' dan</div>' : '') + '</div></button>';
+    }).join('') + '</div>';
+  } else if (p === 'recurring'){
+    h = pageHead('Doimiy toʻlovlar', '<button class="icon-btn" data-act="rec-new" aria-label="Qoʻshish">' + I.plus + '</button>');
+    if (!S.recurring.length) h += '<div class="empty"><div class="big">🔔</div>Har oy takrorlanadigan toʻlovlarni qoʻshing: ijara, internet, kredit, bogʻcha. Muddati yaqinlashsa, bosh sahifada eslatiladi.</div>';
+    else {
+      let tot = 0;
+      h += '<div class="list">' + S.recurring.slice().sort((a, b) => a.day - b.day).map(r => {
+        const st = recurringStatus(r), c = C(r.cat), w = W(r.wallet) || {cur:'UZS', name:'?'};
+        tot += toUZS(r.amount, w.cur);
+        const pill = st.paid ? '<span class="pill ok">Bu oy toʻlandi</span>' : st.days < 0 ? '<span class="pill red">' + (-st.days) + ' kun kechikdi</span>' : st.days === 0 ? '<span class="pill warn">Bugun</span>' : '<span class="pill">' + st.days + ' kun qoldi</span>';
+        return '<div class="tx"><div class="tile-ico" style="background:' + c.color + '22">' + c.icon + '</div><div class="mid" data-act="rec:' + r.id + '"><div class="t1">' + esc(r.name) + '</div><div class="t2 num">' + fmt(r.amount, w.cur) + ' · har oy ' + r.day + '-sana</div><div style="margin-top:4px">' + pill + '</div></div>' + (st.paid ? '' : '<button class="small-btn" data-act="rec-pay:' + r.id + '">Toʻlash</button>') + '</div>';
+      }).join('') + '</div><div class="card"><div class="sub">Oyiga jami</div><b class="num" style="font-size:20px">' + fmt(tot) + '</b></div>';
+    }
+  } else if (p === 'settings'){
+    const th = S.settings.theme;
+    h = pageHead('Sozlamalar');
+    h += '<div class="card"><h4>Shaxsiy</h4><label class="field"><span>Ismingiz</span><input id="setName" value="' + esc(S.settings.name) + '" placeholder="Masalan: Abubakir"></label>' +
+      '<label class="field"><span>Dollar kursi (1 $ = … soʻm)</span><input id="setRate" inputmode="decimal" value="' + S.settings.rate + '"></label><button class="btn pri" style="margin-top:12px" data-act="set-save">Saqlash</button></div>';
+    h += '<div class="card"><h4>Mavzu</h4><div class="seg"><button class="' + (th === 'auto' ? 'on' : '') + '" data-act="theme:auto">Avto</button><button class="' + (th === 'light' ? 'on' : '') + '" data-act="theme:light">Yorugʻ</button><button class="' + (th === 'dark' ? 'on' : '') + '" data-act="theme:dark">Qorongʻi</button></div></div>';
+    h += '<div class="card"><h4>Xavfsizlik</h4><div class="sub" style="margin-bottom:10px">PIN-kod oʻrnatilsa, ilova ochilganda soʻraladi.</div>' + (S.settings.pin ? '<button class="btn sec" data-act="pin-set">PIN-kodni oʻzgartirish</button><button class="btn dng" data-act="pin-off">PIN-kodni oʻchirish</button>' : '<button class="btn sec" data-act="pin-set">🔒 PIN-kod oʻrnatish</button>') + '</div>';
+    h += '<div class="card"><h4>Zaxira nusxa</h4><div class="sub" style="margin-bottom:10px">Maʼlumotlar faqat shu telefonda saqlanadi. Telefon almashtirishdan oldin zaxira nusxani Telegram yoki Google Drive’ga yuboring.</div>' +
+      '<button class="btn pri" data-act="backup-share">📤 Zaxira nusxani yuborish</button>' + (A ? '<button class="btn sec" data-act="backup-save">💾 Yuklamalar papkasiga saqlash</button>' : '') +
+      '<button class="btn sec" data-act="backup-restore">📥 Zaxiradan tiklash</button><button class="btn sec" data-act="csv">📑 Excel uchun eksport (CSV)</button></div>';
+    h += '<div class="card"><h4>Xavfli hudud</h4><button class="btn dng" data-act="wipe">Barcha maʼlumotlarni oʻchirish</button></div>';
+  } else if (p === 'about'){
+    h = pageHead('Ilova haqida') + '<div class="card" style="text-align:center"><div class="logo" style="margin:6px auto 10px">' + I.star + '</div><h2 style="margin:0">Pulnoma</h2><div class="sub">Versiya 1.0 · oʻzbek tilida</div></div>' +
+      '<div class="card">' + [
+        ['🔒','Internetsiz ishlaydi. Maʼlumotlaringiz hech qayerga yuborilmaydi — faqat telefoningizda.'],
+        ['🇺🇿','Toʻliq oʻzbek tilida, soʻm va dollar bilan, mahalliy kategoriyalar (toʻy, kommunal, nasiya).'],
+        ['📒','Qarz daftari: kimga qancha berganingiz, qisman qaytarishlar va Telegram orqali eslatma.'],
+        ['🔔','Doimiy toʻlovlar: ijara, internet, kredit muddatini eslatadi.'],
+        ['📊','Byudjet limitlari, kunlik sarf tavsiyasi va oylik hisobot.'],
+        ['💾','Zaxira nusxa va Excel uchun eksport.']
+      ].map(f => '<div class="feat"><i>' + f[0] + '</i><div>' + f[1] + '</div></div>').join('') + '</div>';
+  }
+  el.innerHTML = h;
+}
+function debtRem(d){ return d.amount - (d.pays || []).reduce((s, p) => s + p.amount, 0); }
+function debtTotals(){
+  const r = {gave:0, took:0};
+  S.debts.forEach(d => { if (!d.closed) r[d.dir] += toUZS(Math.max(debtRem(d), 0), d.cur); });
+  return r;
+}
+
+/* ============ tranzaksiya oynasi ============ */
+function openTx(id, kind){
+  const t = id ? S.tx.find(x => x.id === id) : null;
+  const firstW = W(S.lastWallet) ? S.lastWallet : S.wallets[0].id;
+  U.draft = t ? {id:t.id, kind:t.kind, amt:String(t.amount), cat:t.cat, wallet:t.wallet, to:t.to, date:t.date, note:t.note || ''}
+              : {kind:kind || 'out', amt:'', cat:null, wallet:firstW, to:(S.wallets.find(w => w.id !== firstW) || {}).id, date:today(), note:''};
+  renderTx();
+}
+function renderTx(){
+  const d = U.draft;
+  const w = W(d.wallet) || S.wallets[0];
+  let h = '<div class="sh-head"><div class="seg" style="flex:1">' + [['out','Chiqim'],['in','Kirim'],['tr','Oʻtkazma']].map(k => '<button class="' + (d.kind === k[0] ? 'on' : '') + '" data-act="txk:' + k[0] + '">' + k[1] + '</button>').join('') + '</div><button class="close" data-act="close-sheet" aria-label="Yopish">' + I.x + '</button></div>';
+  h += '<div class="sh-body"><div class="amt-disp"><div class="v num ' + d.kind + '" id="amtV"></div><div class="c">' + (w.cur === 'USD' ? 'AQSh dollari' : 'soʻm') + '</div><div class="conv num" id="amtConv"></div></div>';
+  if (d.kind !== 'tr'){
+    h += '<span class="lbl">Kategoriya</span><div class="cat-grid">' + S.cats.filter(c => c.kind === d.kind).map(c => '<button class="cat' + (d.cat === c.id ? ' on' : '') + '" data-act="txc:' + c.id + '"><span class="ci" style="background:' + c.color + '22">' + c.icon + '</span>' + esc(c.name) + '</button>').join('') + '<button class="cat" data-act="cat-new-inline"><span class="ci" style="background:var(--surface2)">＋</span>Yangi</button></div>';
+  }
+  h += '<span class="lbl">' + (d.kind === 'tr' ? 'Qaysi hamyondan' : 'Hamyon') + '</span><div class="chips">' + S.wallets.map(x => '<button class="chip' + (d.wallet === x.id ? ' on' : '') + '" data-act="txw:' + x.id + '">' + x.icon + ' ' + esc(x.name) + '</button>').join('') + '</div>';
+  if (d.kind === 'tr') h += '<span class="lbl">Qaysi hamyonga</span><div class="chips">' + S.wallets.filter(x => x.id !== d.wallet).map(x => '<button class="chip' + (d.to === x.id ? ' on' : '') + '" data-act="txt:' + x.id + '">' + x.icon + ' ' + esc(x.name) + '</button>').join('') + '</div>';
+  h += '<div class="row2"><label class="field"><span>Sana</span><input type="date" value="' + d.date + '" data-bind="date"></label><label class="field"><span>Izoh</span><input value="' + esc(d.note) + '" placeholder="ixtiyoriy" data-bind="note" maxlength="80"></label></div>';
+  if (d.id) h += '<button class="btn dng" style="margin-top:16px" data-act="tx-del">Oʻchirish</button>';
+  h += '</div><div class="keypad">' + ['7','8','9','⌫','4','5','6','C','1','2','3','ok','000','0','.'].map(k =>
+    '<button class="' + (k === 'ok' ? 'ok' : (k === '⌫' || k === 'C') ? 'fn' : '') + '" data-act="kp:' + k + '">' + (k === 'ok' ? 'Saqlash' : k) + '</button>').join('') + '</div>';
+  openSheet(h);
+  updAmt();
+}
+function updAmt(){
+  const d = U.draft; if (!d) return;
+  const w = W(d.wallet) || S.wallets[0];
+  const v = parseAmt(d.amt);
+  let disp;
+  if (!d.amt) disp = '0';
+  else { const parts = d.amt.split('.'); disp = grp(parts[0] || '0') + (parts.length > 1 ? '.' + parts[1] : ''); }
+  $('#amtV').textContent = (w.cur === 'USD' ? '$' : '') + disp;
+  let conv = '';
+  if (d.kind === 'tr'){
+    const w2 = W(d.to);
+    if (w2 && w2.cur !== w.cur && v) conv = '→ ' + fmt(convertAmt(v, w.cur, w2.cur), w2.cur) + ' (kurs ' + grp(rate()) + ')';
+  } else if (w.cur === 'USD' && v) conv = '≈ ' + fmt(v * rate());
+  $('#amtConv').textContent = conv;
+}
+function convertAmt(v, from, to){
+  if (from === to) return v;
+  if (from === 'USD') return Math.round(v * rate());
+  return Math.round(v / rate() * 100) / 100;
+}
+function keypad(k){
+  const d = U.draft;
+  if (k === 'ok') return saveTx();
+  if (k === '⌫') d.amt = d.amt.slice(0, -1);
+  else if (k === 'C') d.amt = '';
+  else if (k === '.'){ if (!d.amt.includes('.')) d.amt = (d.amt || '0') + '.'; }
+  else {
+    if (d.amt.replace('.', '').length >= 12) return;
+    if (d.amt.includes('.') && d.amt.split('.')[1].length >= 2) return;
+    if (d.amt === '0') d.amt = '';
+    d.amt += k;
+    if (/^0+$/.test(d.amt)) d.amt = '0';
+  }
+  updAmt();
+}
+function saveTx(){
+  const d = U.draft, v = parseAmt(d.amt);
+  if (!(v > 0)) return toast('Summani kiriting');
+  if (d.kind !== 'tr' && !d.cat) return toast('Kategoriyani tanlang');
+  if (d.kind === 'tr' && (!d.to || d.to === d.wallet)) return toast('Qaysi hamyonga oʻtkazishni tanlang');
+  const w = W(d.wallet);
+  const rec = {id: d.id || uid(), kind: d.kind, amount: w.cur === 'USD' ? Math.round(v * 100) / 100 : Math.round(v), wallet: d.wallet, date: d.date || today(), note: (d.note || '').trim(), ts: Date.now()};
+  if (d.kind === 'tr'){ rec.to = d.to; rec.amount2 = convertAmt(rec.amount, w.cur, W(d.to).cur); }
+  else rec.cat = d.cat;
+  if (d.id){ const i = S.tx.findIndex(x => x.id === d.id); if (i >= 0){ rec.ts = S.tx[i].ts; S.tx[i] = rec; } }
+  else S.tx.push(rec);
+  S.lastWallet = d.wallet;
+  const wasNew = !d.id;
+  save(); closeSheet(); renderView(); if (U.page.length) renderPage();
+  toast(wasNew ? 'Saqlandi ✓' : 'Oʻzgartirildi ✓');
+  if (rec.kind === 'out') budgetCheck(rec);
+}
+function budgetCheck(rec){
+  const mk = mkey(rec.date);
+  for (const bg of S.budgets){
+    if (bg.cat !== 'all' && bg.cat !== rec.cat) continue;
+    const spent = monthSum(mk, 'out', bg.cat === 'all' ? null : bg.cat);
+    const before = spent - txUZS(rec);
+    const name = bg.cat === 'all' ? 'Umumiy byudjet' : C(bg.cat).name;
+    if (spent > bg.limit && before <= bg.limit){ setTimeout(() => toast('⚠️ ' + name + ': limit oshib ketdi!'), 2300); return; }
+    if (spent >= bg.limit * 0.8 && before < bg.limit * 0.8){ setTimeout(() => toast('⚠️ ' + name + ': limitning 80% ishlatildi'), 2300); return; }
+  }
+}
+
+/* ============ hamyon ============ */
+function openWallet(id){
+  const w = id ? W(id) : {name:'', icon:'💳', color:COLORS[4], cur:'UZS', start:0};
+  U.draft = {id, name:w.name, icon:w.icon, color:w.color, cur:w.cur, start:w.start ? String(w.start) : ''};
+  renderWallet();
+}
+function renderWallet(){
+  const d = U.draft, used = d.id && S.tx.some(t => t.wallet === d.id || t.to === d.id);
+  let h = sheetHead(d.id ? 'Hamyonni tahrirlash' : 'Yangi hamyon') + '<div class="sh-body">';
+  if (d.id){ const b = balances()[d.id] || 0; h += '<div class="card" style="margin:0 0 6px;box-shadow:none;background:var(--surface2);border:0"><div class="sub">Joriy balans</div><b class="num" style="font-size:22px">' + fmt(b, d.cur) + '</b></div>'; }
+  h += '<label class="field"><span>Nomi</span><input value="' + esc(d.name) + '" data-bind="name" placeholder="Masalan: Humo karta" maxlength="30"></label>';
+  h += '<span class="lbl">Valyuta</span><div class="seg">' + [['UZS','Soʻm'],['USD','Dollar']].map(c => '<button class="' + (d.cur === c[0] ? 'on' : '') + '" data-act="wcur:' + c[0] + '"' + (used ? ' disabled style="opacity:.5"' : '') + '>' + c[1] + '</button>').join('') + '</div>';
+  h += '<label class="field"><span>Boshlangʻich qoldiq</span><input inputmode="decimal" value="' + esc(d.start) + '" data-bind="start" placeholder="0"></label>';
+  h += '<span class="lbl">Belgi</span><div class="emoji-grid">' + ['💵','💳','💲','🏦','👛','🪙','💰','📱','🏪','🐷','🎯','🧳','🚗','🏠','💼','⭐'].map(e => '<button class="' + (d.icon === e ? 'on' : '') + '" data-act="wico:' + e + '">' + e + '</button>').join('') + '</div>';
+  h += '<span class="lbl">Rang</span><div class="color-row">' + COLORS.map(c => '<button class="' + (d.color === c ? 'on' : '') + '" style="background:' + c + '" data-act="wcol:' + c + '" aria-label="rang"></button>').join('') + '</div>';
+  if (d.id) h += '<button class="btn dng" style="margin-top:18px" data-act="wallet-del">Hamyonni oʻchirish</button>';
+  h += '</div><div class="sh-foot"><button class="btn pri" data-act="wallet-save">Saqlash</button></div>';
+  openSheet(h);
+}
+function saveWallet(){
+  const d = U.draft;
+  if (!d.name.trim()) return toast('Hamyon nomini kiriting');
+  const rec = {id: d.id || uid(), name: d.name.trim(), icon: d.icon, color: d.color, cur: d.cur, start: parseAmt(d.start)};
+  if (d.id){ const i = S.wallets.findIndex(w => w.id === d.id); S.wallets[i] = rec; } else S.wallets.push(rec);
+  save(); closeSheet(); renderView(); if (U.page.length) renderPage(); toast('Saqlandi ✓');
+}
+
+/* ============ kategoriya ============ */
+function openCat(id, kind, inline){
+  const c = id ? C(id) : {name:'', icon:'📦', color:COLORS[0], kind: kind || 'out'};
+  U.catReturn = inline ? JSON.parse(JSON.stringify(U.draft)) : null;
+  U.draft = {id, name:c.name, icon:c.icon, color:c.color, kind:c.kind};
+  renderCat();
+}
+function renderCat(){
+  const d = U.draft;
+  let h = sheetHead(d.id ? 'Kategoriyani tahrirlash' : 'Yangi kategoriya') + '<div class="sh-body">';
+  if (!d.id) h += '<div class="seg" style="margin-bottom:6px"><button class="' + (d.kind === 'out' ? 'on' : '') + '" data-act="ck:out">Chiqim</button><button class="' + (d.kind === 'in' ? 'on' : '') + '" data-act="ck:in">Kirim</button></div>';
+  h += '<label class="field"><span>Nomi</span><input value="' + esc(d.name) + '" data-bind="name" placeholder="Masalan: Bogʻcha" maxlength="28"></label>';
+  h += '<span class="lbl">Belgi</span><div class="emoji-grid">' + EMOJIS.map(e => '<button class="' + (d.icon === e ? 'on' : '') + '" data-act="cico:' + e + '">' + e + '</button>').join('') + '</div>';
+  h += '<span class="lbl">Rang</span><div class="color-row">' + COLORS.map(c => '<button class="' + (d.color === c ? 'on' : '') + '" style="background:' + c + '" data-act="ccol:' + c + '" aria-label="rang"></button>').join('') + '</div>';
+  if (d.id) h += '<button class="btn dng" style="margin-top:18px" data-act="cat-del">Kategoriyani oʻchirish</button>';
+  h += '</div><div class="sh-foot"><button class="btn pri" data-act="cat-save">Saqlash</button></div>';
+  openSheet(h);
+}
+function saveCat(){
+  const d = U.draft;
+  if (!d.name.trim()) return toast('Nomini kiriting');
+  const rec = {id: d.id || uid(), name: d.name.trim(), icon: d.icon, color: d.color, kind: d.kind};
+  if (d.id){ const i = S.cats.findIndex(c => c.id === d.id); S.cats[i] = rec; }
+  else { const others = S.cats.filter(c => c.kind === d.kind && /^(other|otherin)$/.test(c.id)); const idx = others.length ? S.cats.indexOf(others[0]) : S.cats.length; S.cats.splice(idx, 0, rec); }
+  save();
+  if (U.catReturn){ const back = U.catReturn; U.catReturn = null; back.kind = rec.kind; back.cat = rec.id; U.draft = back; renderTx(); }
+  else { closeSheet(); if (U.page.length) renderPage(); }
+  toast('Saqlandi ✓');
+}
+
+/* ============ byudjet ============ */
+function openBudget(id){
+  const b = id ? S.budgets.find(x => x.id === id) : {cat:null, limit:''};
+  U.draft = {id, cat:b.cat, limit:b.limit ? String(b.limit) : ''};
+  renderBudget();
+}
+function renderBudget(){
+  const d = U.draft;
+  const taken = S.budgets.filter(b => b.id !== d.id).map(b => b.cat);
+  let h = sheetHead(d.id ? 'Byudjetni tahrirlash' : 'Yangi byudjet') + '<div class="sh-body">';
+  h += '<label class="field"><span>Oylik limit (soʻm)</span><input inputmode="decimal" value="' + esc(d.limit) + '" data-bind="limit" placeholder="Masalan: 2 000 000"></label>';
+  h += '<span class="lbl">Qaysi xarajatlar uchun</span><div class="cat-grid">' + (taken.includes('all') ? '' : '<button class="cat' + (d.cat === 'all' ? ' on' : '') + '" data-act="bc:all"><span class="ci" style="background:var(--brand-soft)">📊</span>Umumiy</button>') +
+    S.cats.filter(c => c.kind === 'out' && !taken.includes(c.id)).map(c => '<button class="cat' + (d.cat === c.id ? ' on' : '') + '" data-act="bc:' + c.id + '"><span class="ci" style="background:' + c.color + '22">' + c.icon + '</span>' + esc(c.name) + '</button>').join('') + '</div>';
+  if (d.id) h += '<button class="btn dng" style="margin-top:18px" data-act="budget-del">Byudjetni oʻchirish</button>';
+  h += '</div><div class="sh-foot"><button class="btn pri" data-act="budget-save">Saqlash</button></div>';
+  openSheet(h);
+}
+function saveBudget(){
+  const d = U.draft, v = parseAmt(d.limit);
+  if (!(v > 0)) return toast('Limit summasini kiriting');
+  if (!d.cat) return toast('Kategoriyani tanlang');
+  const rec = {id: d.id || uid(), cat: d.cat, limit: Math.round(v)};
+  if (d.id){ const i = S.budgets.findIndex(b => b.id === d.id); S.budgets[i] = rec; } else S.budgets.push(rec);
+  save(); closeSheet(); if (U.page.length) renderPage(); renderView(); toast('Saqlandi ✓');
+}
+
+/* ============ qarz ============ */
+function openDebt(id){
+  const x = id ? S.debts.find(d => d.id === id) : {who:'', dir:U.debtTab, amount:'', cur:'UZS', date:today(), due:'', note:''};
+  U.draft = {id, who:x.who, dir:x.dir, amount:x.amount ? String(x.amount) : '', cur:x.cur, date:x.date, due:x.due || '', note:x.note || ''};
+  renderDebtForm();
+}
+function renderDebtForm(){
+  const d = U.draft;
+  let h = sheetHead(d.id ? 'Qarzni tahrirlash' : 'Yangi qarz') + '<div class="sh-body">';
+  h += '<div class="seg"><button class="' + (d.dir === 'gave' ? 'on' : '') + '" data-act="dd:gave">Men berdim</button><button class="' + (d.dir === 'took' ? 'on' : '') + '" data-act="dd:took">Men oldim</button></div>';
+  h += '<label class="field"><span>' + (d.dir === 'gave' ? 'Kimga' : 'Kimdan') + '</span><input value="' + esc(d.who) + '" data-bind="who" placeholder="Ism yoki doʻkon nomi" maxlength="40"></label>';
+  h += '<div class="row2"><label class="field"><span>Summa</span><input inputmode="decimal" value="' + esc(d.amount) + '" data-bind="amount" placeholder="0"></label><label class="field"><span>Valyuta</span><select data-bind="cur"><option value="UZS"' + (d.cur === 'UZS' ? ' selected' : '') + '>Soʻm</option><option value="USD"' + (d.cur === 'USD' ? ' selected' : '') + '>Dollar</option></select></label></div>';
+  h += '<div class="row2"><label class="field"><span>Sana</span><input type="date" value="' + d.date + '" data-bind="date"></label><label class="field"><span>Qaytarish muddati</span><input type="date" value="' + d.due + '" data-bind="due"></label></div>';
+  h += '<label class="field"><span>Izoh</span><input value="' + esc(d.note) + '" data-bind="note" placeholder="ixtiyoriy" maxlength="80"></label>';
+  h += '</div><div class="sh-foot"><button class="btn pri" data-act="debt-save">Saqlash</button></div>';
+  openSheet(h);
+}
+function saveDebt(){
+  const d = U.draft, v = parseAmt(d.amount);
+  if (!d.who.trim()) return toast('Ismni kiriting');
+  if (!(v > 0)) return toast('Summani kiriting');
+  if (d.id){ const x = S.debts.find(z => z.id === d.id); Object.assign(x, {who:d.who.trim(), dir:d.dir, amount:v, cur:d.cur, date:d.date, due:d.due, note:d.note.trim()}); x.closed = debtRem(x) <= 0; }
+  else S.debts.push({id:uid(), who:d.who.trim(), dir:d.dir, amount:v, cur:d.cur, date:d.date || today(), due:d.due, note:d.note.trim(), pays:[], closed:false});
+  U.debtTab = d.dir;
+  save(); closeSheet(); if (U.page.length) renderPage(); renderView(); toast('Saqlandi ✓');
+}
+function openDebtDetail(id){
+  const d = S.debts.find(x => x.id === id); if (!d) return;
+  U.draft = {debt:id, pay:''};
+  const rem = debtRem(d);
+  let h = sheetHead(d.who) + '<div class="sh-body">';
+  h += '<div class="card" style="margin:0 0 10px;box-shadow:none;background:var(--surface2);border:0"><div class="sub">' + (d.dir === 'gave' ? 'Sizga qaytarishi kerak' : 'Siz qaytarishingiz kerak') + '</div><div class="num ' + (d.dir === 'gave' ? 'in' : 'out') + '" style="font-size:28px;font-weight:800">' + fmt(Math.max(rem, 0), d.cur) + '</div><div class="sub num">Jami: ' + fmt(d.amount, d.cur) + ' · ' + shortDate(d.date) + (d.due ? ' · muddat ' + shortDate(d.due) : '') + '</div>' + (d.note ? '<div class="sub" style="margin-top:4px">' + esc(d.note) + '</div>' : '') + '</div>';
+  if (!d.closed){
+    h += '<span class="lbl">Qisman qaytarildi</span><div style="display:flex;gap:8px"><input inputmode="decimal" placeholder="Summa" data-bind="pay" style="flex:1;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);outline:none"><button class="small-btn" data-act="debt-pay">Qoʻshish</button></div>';
+  }
+  if ((d.pays || []).length){
+    h += '<span class="lbl">Qaytarishlar tarixi</span>' + d.pays.map(p => '<div class="tile-row" style="padding:8px 0;border-top:1px solid var(--line)"><div style="flex:1">' + shortDate(p.date) + '</div><b class="num">' + fmt(p.amount, d.cur) + '</b><button class="close" data-act="debt-unpay:' + p.id + '" aria-label="Oʻchirish" style="width:30px;height:30px;flex-basis:30px">' + I.x + '</button></div>').join('');
+  }
+  h += '<div style="margin-top:16px">';
+  if (!d.closed){
+    if (d.dir === 'gave') h += '<button class="btn sec" data-act="debt-remind">💬 Eslatma yuborish</button>';
+    h += '<button class="btn pri" data-act="debt-close">✓ Toʻliq qaytarildi</button>';
+  } else h += '<button class="btn sec" data-act="debt-reopen">Qayta ochish</button>';
+  h += '<button class="btn sec" data-act="debt-edit">Tahrirlash</button><button class="btn dng" data-act="debt-del">Oʻchirish</button></div></div>';
+  openSheet(h);
+}
+
+/* ============ doimiy to'lov ============ */
+function openRec(id){
+  const r = id ? S.recurring.find(x => x.id === id) : {name:'', amount:'', cat:'util', wallet:S.wallets[0].id, day:10};
+  U.draft = {id, name:r.name, amount:r.amount ? String(r.amount) : '', cat:r.cat, wallet:r.wallet, day:String(r.day)};
+  renderRec();
+}
+function renderRec(){
+  const d = U.draft;
+  let h = sheetHead(d.id ? 'Doimiy toʻlov' : 'Yangi doimiy toʻlov') + '<div class="sh-body">';
+  h += '<label class="field"><span>Nomi</span><input value="' + esc(d.name) + '" data-bind="name" placeholder="Masalan: Uy internet" maxlength="40"></label>';
+  h += '<div class="row2"><label class="field"><span>Summa</span><input inputmode="decimal" value="' + esc(d.amount) + '" data-bind="amount" placeholder="0"></label><label class="field"><span>Har oy, sana</span><select data-bind="day">' + Array.from({length:31}, (_, i) => '<option' + (String(i + 1) === d.day ? ' selected' : '') + '>' + (i + 1) + '</option>').join('') + '</select></label></div>';
+  h += '<span class="lbl">Hamyon</span><div class="chips">' + S.wallets.map(x => '<button class="chip' + (d.wallet === x.id ? ' on' : '') + '" data-act="rw:' + x.id + '">' + x.icon + ' ' + esc(x.name) + '</button>').join('') + '</div>';
+  h += '<span class="lbl">Kategoriya</span><div class="cat-grid">' + S.cats.filter(c => c.kind === 'out').map(c => '<button class="cat' + (d.cat === c.id ? ' on' : '') + '" data-act="rc:' + c.id + '"><span class="ci" style="background:' + c.color + '22">' + c.icon + '</span>' + esc(c.name) + '</button>').join('') + '</div>';
+  if (d.id) h += '<button class="btn dng" style="margin-top:18px" data-act="rec-del">Oʻchirish</button>';
+  h += '</div><div class="sh-foot"><button class="btn pri" data-act="rec-save">Saqlash</button></div>';
+  openSheet(h);
+}
+function saveRec(){
+  const d = U.draft, v = parseAmt(d.amount);
+  if (!d.name.trim()) return toast('Nomini kiriting');
+  if (!(v > 0)) return toast('Summani kiriting');
+  const rec = {id: d.id || uid(), name: d.name.trim(), amount: v, cat: d.cat, wallet: d.wallet, day: +d.day || 1};
+  if (d.id){ const i = S.recurring.findIndex(r => r.id === d.id); rec.lastPaid = S.recurring[i].lastPaid; S.recurring[i] = rec; } else S.recurring.push(rec);
+  save(); closeSheet(); if (U.page.length) renderPage(); renderView(); toast('Saqlandi ✓');
+}
+async function payRec(id){
+  const r = S.recurring.find(x => x.id === id); if (!r) return;
+  const w = W(r.wallet) || S.wallets[0];
+  const ok = await confirmBox(r.name, fmt(r.amount, w.cur) + ' “' + w.name + '” hamyonidan chiqim sifatida yoziladi.', 'Toʻlandi');
+  if (!ok) return;
+  S.tx.push({id:uid(), kind:'out', amount:r.amount, wallet:w.id, cat:r.cat, date:today(), note:r.name, ts:Date.now()});
+  r.lastPaid = mkey(today());
+  save(); renderView(); if (U.page.length) renderPage(); toast('Toʻlov yozildi ✓');
+}
+
+/* ============ PIN ============ */
+function pinPad(container, title, sub, onDone){
+  let v = '';
+  function draw(){
+    container.innerHTML = '<div class="logo">' + I.star + '</div><h2 style="margin:0">' + esc(title) + '</h2><div class="sub" style="margin-top:4px;text-align:center">' + esc(sub || '') + '</div><div class="dots" id="pdots">' + [0,1,2,3].map(i => '<i class="' + (i < v.length ? 'f' : '') + '"></i>').join('') + '</div>' +
+      '<div class="pinpad">' + ['1','2','3','4','5','6','7','8','9','','0','⌫'].map(k => k === '' ? '<span></span>' : '<button class="' + (k === '⌫' ? 'fn' : '') + '" data-k="' + k + '">' + k + '</button>').join('') + '</div>';
+    $$('.pinpad button', container).forEach(b => b.onclick = () => {
+      const k = b.dataset.k;
+      if (k === '⌫') v = v.slice(0, -1); else if (v.length < 4) v += k;
+      draw();
+      if (v.length === 4) setTimeout(() => { const r = onDone(v); if (r === false){ v = ''; draw(); const d = $('#pdots', container); d.classList.add('shake'); } }, 120);
+    });
+  }
+  draw();
+}
+function showLock(){
+  const l = $('#lock'); l.classList.add('on');
+  pinPad(l, 'Pulnoma', 'PIN-kodni kiriting', v => { if (hash(v) === S.settings.pin){ l.classList.remove('on'); l.innerHTML = ''; return true; } return false; });
+}
+function setPin(){
+  const l = $('#lock'); l.classList.add('on');
+  let first = null;
+  const cancel = '<button class="btn sec" style="max-width:240px;margin-top:22px" id="pinCancel">Bekor qilish</button>';
+  function step1(){ pinPad(l, 'Yangi PIN-kod', '4 ta raqam kiriting', v => { first = v; step2(); return true; }); l.insertAdjacentHTML('beforeend', cancel); $('#pinCancel').onclick = done; }
+  function step2(){ pinPad(l, 'Takrorlang', 'PIN-kodni yana bir bor kiriting', v => { if (v !== first){ toast('Mos kelmadi, qaytadan'); step1(); return true; } S.settings.pin = hash(v); save(); done(); toast('PIN-kod oʻrnatildi 🔒'); return true; }); l.insertAdjacentHTML('beforeend', cancel); $('#pinCancel').onclick = done; }
+  function done(){ l.classList.remove('on'); l.innerHTML = ''; renderPage(); }
+  step1();
+}
+
+/* ============ eksport / import ============ */
+function shareFile(name, mime, text){
+  if (A && A.shareFile){ try { A.shareFile(name, mime, text); return; } catch (e) {} }
+  try {
+    const f = new File([text], name, {type: mime});
+    if (navigator.canShare && navigator.canShare({files:[f]})){ navigator.share({files:[f], title:name}).catch(() => {}); return; }
+  } catch (e) {}
+  downloadFile(name, mime, text);
+}
+function downloadFile(name, mime, text){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], {type: mime}));
+  a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  toast('Fayl yuklab olindi');
+}
+function shareText(text){
+  if (A && A.shareText){ try { A.shareText(text); return; } catch (e) {} }
+  if (navigator.share){ navigator.share({text}).catch(() => {}); return; }
+  try { navigator.clipboard.writeText(text); toast('Matn nusxalandi'); } catch (e) { toast(text); }
+}
+function backupJSON(){ return JSON.stringify({app:'pulnoma', v:1, exported:new Date().toISOString(), data:S}); }
+function csv(){
+  const q = s => '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"';
+  const rows = [['Sana','Turi','Summa','Valyuta','Kategoriya','Hamyon','Qaysi hamyonga','Izoh'].map(q).join(';')];
+  sortTx(S.tx).forEach(t => {
+    const w = W(t.wallet) || {name:'?', cur:'UZS'};
+    rows.push([t.date, t.kind === 'in' ? 'Kirim' : t.kind === 'out' ? 'Chiqim' : 'Oʻtkazma', String(t.amount).replace('.', ','), w.cur === 'USD' ? 'USD' : 'UZS', t.kind === 'tr' ? '' : C(t.cat).name, w.name, t.kind === 'tr' ? (W(t.to) || {}).name : '', t.note].map(q).join(';'));
+  });
+  return '﻿' + rows.join('\r\n');
+}
+function restoreFrom(text){
+  let o;
+  try { o = JSON.parse(text); } catch (e) { return toast('Fayl notoʻgʻri'); }
+  const data = o && o.app === 'pulnoma' ? o.data : null;
+  if (!data || !Array.isArray(data.wallets) || !Array.isArray(data.tx)) return toast('Bu Pulnoma zaxira fayli emas');
+  confirmBox('Zaxiradan tiklash', 'Hozirgi maʼlumotlar ' + (o.exported ? o.exported.slice(0, 10) + ' sanadagi ' : '') + 'zaxira nusxa bilan almashtiriladi (' + data.tx.length + ' ta yozuv).', 'Tiklash', true).then(ok => {
+    if (!ok) return;
+    const pin = S ? S.settings.pin : null;
+    S = Object.assign(defState(), data);
+    S.settings = Object.assign(defState().settings, data.settings || {});
+    if (!S.settings.pin && pin) S.settings.pin = pin;
+    ['budgets','debts','recurring','cats'].forEach(k => { if (!Array.isArray(S[k])) S[k] = defState()[k]; });
+    save(); closeSheet(); $('#onb').classList.remove('on'); applyTheme(); renderView(); if (U.page.length) renderPage();
+    toast('Maʼlumotlar tiklandi ✓');
+  });
+}
+$('#fileIn').addEventListener('change', e => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const r = new FileReader(); r.onload = () => restoreFrom(String(r.result)); r.readAsText(f); e.target.value = '';
+});
+function openRestore(){
+  U.draft = {paste:''};
+  openSheet(sheetHead('Zaxiradan tiklash') + '<div class="sh-body"><div class="sub">Avval yuborgan <b>pulnoma-zaxira-….json</b> faylini tanlang.</div><button class="btn pri" style="margin-top:12px" data-act="pick-file">📁 Faylni tanlash</button><label class="field"><span>yoki matnini shu yerga qoʻying</span><textarea rows="4" data-bind="paste" placeholder="{&quot;app&quot;:&quot;pulnoma&quot;, …}"></textarea></label><button class="btn sec" style="margin-top:10px" data-act="restore-paste">Tiklash</button></div>');
+}
+
+/* ============ namuna ma'lumot ============ */
+function demoData(){
+  const s = defState();
+  s.settings.name = 'Abubakir';
+  s.wallets[0].start = 1500000; s.wallets[1].start = 4200000; s.wallets[2].start = 300;
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pick = (a, b) => Math.round((a + rnd() * (b - a)) / 1000) * 1000;
+  const add = (kind, amount, wallet, cat, date, note) => s.tx.push({id:uid() + s.tx.length, kind, amount, wallet, cat, date, note:note || '', ts:Date.parse(date) + s.tx.length});
+  const now = new Date();
+  for (let i = 75; i >= 0; i--){
+    const d = new Date(now); d.setDate(d.getDate() - i); const ds = dstr(d), dd = d.getDate();
+    if (dd === 5) add('in', 6500000, 'card', 'salary', ds, 'Oylik');
+    if (dd === 1) add('out', 2500000, 'card', 'home', ds, 'Kvartira ijarasi');
+    if (dd === 12) add('out', pick(280000, 420000), 'card', 'util', ds, 'Gaz va svet');
+    if (dd === 10) add('out', 80000, 'card', 'phone', ds, 'Uy internet');
+    if (rnd() < 0.18) add('in', pick(150000, 900000), 'cash', 'biz', ds, ['Raqam sotildi','Savdo','Xizmat haqi'][Math.floor(rnd() * 3)]);
+    if (rnd() < 0.7) add('out', pick(45000, 260000), rnd() < 0.5 ? 'cash' : 'card', 'food', ds, ['Bozorlik','Korzinka','Non, sut','Goʻsht'][Math.floor(rnd() * 4)]);
+    if (rnd() < 0.5) add('out', pick(12000, 38000), 'cash', 'taxi', ds, rnd() < 0.5 ? 'Yandex Go' : 'Marshrutka');
+    if (rnd() < 0.22) add('out', pick(60000, 240000), 'card', 'cafe', ds, ['Osh markazi','Choyxona','Lavash'][Math.floor(rnd() * 3)]);
+    if (rnd() < 0.08) add('out', pick(150000, 600000), 'card', 'cloth', ds, '');
+    if (rnd() < 0.07) add('out', pick(40000, 180000), 'cash', 'health', ds, 'Dorixona');
+    if (rnd() < 0.05) add('out', pick(200000, 500000), 'cash', 'toy', ds, 'Toʻyga');
+    if (rnd() < 0.1) add('out', pick(80000, 200000), 'card', 'fuel', ds, 'Metan');
+    if (dd === 6) s.tx.push({id:uid() + 'tr' + i, kind:'tr', amount:1000000, wallet:'card', to:'cash', amount2:1000000, date:ds, note:'Bankomatdan', ts:Date.parse(ds)});
+  }
+  s.budgets = [{id:'b1', cat:'food', limit:3000000}, {id:'b2', cat:'cafe', limit:600000}, {id:'b3', cat:'taxi', limit:500000}];
+  const ds = n => { const d = new Date(); d.setDate(d.getDate() + n); return dstr(d); };
+  s.debts = [
+    {id:'d1', who:'Akmal aka', dir:'gave', amount:2000000, cur:'UZS', date:ds(-20), due:ds(10), note:'Mashina taʼmiri uchun', pays:[{id:'p1', amount:500000, date:ds(-5)}], closed:false},
+    {id:'d2', who:'Sardor', dir:'gave', amount:150, cur:'USD', date:ds(-40), due:ds(-3), note:'', pays:[], closed:false},
+    {id:'d3', who:'Ulgurji doʻkon', dir:'took', amount:1200000, cur:'UZS', date:ds(-12), due:ds(18), note:'Nasiyaga mol', pays:[], closed:false}
+  ];
+  const mk = mkey(today());
+  s.recurring = [
+    {id:'r1', name:'Kvartira ijarasi', amount:2500000, cat:'home', wallet:'card', day:1, lastPaid:mk},
+    {id:'r2', name:'Uy internet', amount:80000, cat:'phone', wallet:'card', day:Math.min(parseD(today()).getDate() + 2, 28)},
+    {id:'r3', name:'Kredit toʻlovi', amount:1150000, cat:'credit', wallet:'card', day:25}
+  ];
+  return s;
+}
+
+/* ============ onboarding ============ */
+function showOnb(){
+  const o = $('#onb'); o.classList.add('on');
+  o.innerHTML = '<div class="onb"><div class="logo" style="margin:0 auto 14px">' + I.star + '</div><h1>Pulnoma</h1><div class="tag">Pulingiz hisobi — oʻzbek tilida, oson va xavfsiz</div>' +
+    '<div class="card" style="margin:0 0 12px"><label class="field" style="margin-top:0"><span>Ismingiz</span><input id="oName" placeholder="ixtiyoriy" maxlength="30"></label>' +
+    '<div class="row2"><label class="field"><span>Naqd pul</span><input id="oCash" inputmode="decimal" placeholder="0 soʻm"></label><label class="field"><span>Karta</span><input id="oCard" inputmode="decimal" placeholder="0 soʻm"></label></div>' +
+    '<label class="field"><span>Dollar</span><input id="oUsd" inputmode="decimal" placeholder="$0"></label></div>' +
+    '<button class="btn pri" id="oStart">Boshlash</button><button class="btn sec" id="oDemo">Namuna maʼlumotlar bilan koʻrish</button><button class="btn sec" id="oRestore">Zaxiradan tiklash</button>' +
+    '<div class="note-box">🔒 Ilova internetsiz ishlaydi — maʼlumotlaringiz faqat shu telefonda saqlanadi.</div></div>';
+  $('#oStart').onclick = () => {
+    S = defState();
+    S.settings.name = $('#oName').value.trim();
+    S.wallets[0].start = parseAmt($('#oCash').value); S.wallets[1].start = parseAmt($('#oCard').value); S.wallets[2].start = parseAmt($('#oUsd').value);
+    save(); o.classList.remove('on'); applyTheme(); renderView();
+  };
+  $('#oDemo').onclick = () => { S = demoData(); save(); o.classList.remove('on'); applyTheme(); renderView(); toast('Namuna yuklandi. Sozlamalardan tozalash mumkin'); };
+  $('#oRestore').onclick = () => { $('#fileIn').click(); };
+}
+
+/* ============ hodisalar ============ */
+document.addEventListener('input', e => {
+  const k = e.target.dataset && e.target.dataset.bind;
+  if (!k) return;
+  if (k === 'q'){ U.q = e.target.value; renderHistList(); return; }
+  if (U.draft) U.draft[k] = e.target.value;
+});
+document.addEventListener('change', e => {
+  const k = e.target.dataset && e.target.dataset.bind;
+  if (k && U.draft) U.draft[k] = e.target.value;
+});
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-act]'); if (!el || el.disabled) return;
+  const a = el.dataset.act, i = a.indexOf(':'), cmd = i < 0 ? a : a.slice(0, i), arg = i < 0 ? '' : a.slice(i + 1);
+  const d = U.draft;
+  switch (cmd){
+    case 'view': if (U.page.length){ U.page = []; $('#page').classList.remove('on'); } setView(arg); break;
+    case 'page': openPage(arg); break;
+    case 'page-back': closePage(); break;
+    case 'close-sheet': if (U.catReturn){ const b = U.catReturn; U.catReturn = null; U.draft = b; renderTx(); } else closeSheet(); break;
+    case 'hide': S.settings.hide = !S.settings.hide; save(); renderView(); break;
+    // tranzaksiya
+    case 'tx-new': openTx(null); break;
+    case 'tx-new-tr': openTx(null, 'tr'); break;
+    case 'tx': openTx(arg); break;
+    case 'txk': d.kind = arg; if (arg !== 'tr' && d.cat && C(d.cat).kind !== arg) d.cat = null; if (arg === 'tr' && (!d.to || d.to === d.wallet)) d.to = (S.wallets.find(w => w.id !== d.wallet) || {}).id; renderTx(); break;
+    case 'txc': d.cat = arg; $$('#sheet .cat').forEach(b => b.classList.toggle('on', b.dataset.act === 'txc:' + arg)); break;
+    case 'txw': d.wallet = arg; if (d.to === arg) d.to = (S.wallets.find(w => w.id !== arg) || {}).id; renderTx(); break;
+    case 'txt': d.to = arg; $$('#sheet [data-act^="txt:"]').forEach(b => b.classList.toggle('on', b.dataset.act === a)); updAmt(); break;
+    case 'kp': keypad(arg); break;
+    case 'tx-del': if (await confirmBox('Oʻchirilsinmi?', 'Bu yozuv butunlay oʻchiriladi.', 'Oʻchirish', true)){ S.tx = S.tx.filter(t => t.id !== d.id); save(); closeSheet(); renderView(); if (U.page.length) renderPage(); toast('Oʻchirildi'); } break;
+    case 'cat-new-inline': openCat(null, d.kind, true); break;
+    // hamyon
+    case 'wallet-new': openWallet(null); break;
+    case 'wallet': openWallet(arg); break;
+    case 'wcur': d.cur = arg; renderWallet(); break;
+    case 'wico': d.icon = arg; renderWallet(); break;
+    case 'wcol': d.color = arg; renderWallet(); break;
+    case 'wallet-save': saveWallet(); break;
+    case 'wallet-del': {
+      if (S.wallets.length <= 1) return toast('Kamida bitta hamyon boʻlishi kerak');
+      const n = S.tx.filter(t => t.wallet === d.id || t.to === d.id).length;
+      if (await confirmBox('Hamyon oʻchirilsinmi?', n ? 'Unga tegishli ' + n + ' ta yozuv ham oʻchiriladi.' : 'Hamyon oʻchiriladi.', 'Oʻchirish', true)){
+        S.tx = S.tx.filter(t => t.wallet !== d.id && t.to !== d.id); S.wallets = S.wallets.filter(w => w.id !== d.id);
+        S.recurring.forEach(r => { if (r.wallet === d.id) r.wallet = S.wallets[0].id; });
+        if (S.lastWallet === d.id) S.lastWallet = S.wallets[0].id;
+        save(); closeSheet(); renderView(); if (U.page.length) renderPage(); toast('Oʻchirildi');
+      } break;
+    }
+    // kategoriya
+    case 'cat-new': openCat(null, 'out'); break;
+    case 'cat': openCat(arg); break;
+    case 'ck': d.kind = arg; renderCat(); break;
+    case 'cico': d.icon = arg; $$('#sheet [data-act^="cico:"]').forEach(b => b.classList.toggle('on', b.dataset.act === a)); break;
+    case 'ccol': d.color = arg; $$('#sheet [data-act^="ccol:"]').forEach(b => b.classList.toggle('on', b.dataset.act === a)); break;
+    case 'cat-save': saveCat(); break;
+    case 'cat-del': {
+      const n = S.tx.filter(t => t.cat === d.id).length;
+      const fallback = d.kind === 'in' ? 'otherin' : 'other';
+      if (d.id === fallback) return toast('“Boshqa” kategoriyasini oʻchirib boʻlmaydi');
+      if (await confirmBox('Kategoriya oʻchirilsinmi?', n ? n + ' ta yozuv “Boshqa” kategoriyasiga oʻtkaziladi.' : 'Kategoriya oʻchiriladi.', 'Oʻchirish', true)){
+        if (!S.cats.find(c => c.id === fallback)) S.cats.push(defState().cats.find(c => c.id === fallback));
+        S.tx.forEach(t => { if (t.cat === d.id) t.cat = fallback; });
+        S.recurring.forEach(r => { if (r.cat === d.id) r.cat = 'other'; });
+        S.budgets = S.budgets.filter(b => b.cat !== d.id);
+        S.cats = S.cats.filter(c => c.id !== d.id);
+        save(); closeSheet(); renderView(); if (U.page.length) renderPage(); toast('Oʻchirildi');
+      } break;
+    }
+    // byudjet
+    case 'budget-new': openBudget(null); break;
+    case 'budget': openBudget(arg); break;
+    case 'bc': d.cat = arg; $$('#sheet [data-act^="bc:"]').forEach(b => b.classList.toggle('on', b.dataset.act === a)); break;
+    case 'budget-save': saveBudget(); break;
+    case 'budget-del': S.budgets = S.budgets.filter(b => b.id !== d.id); save(); closeSheet(); renderPage(); renderView(); toast('Oʻchirildi'); break;
+    // qarz
+    case 'dt': U.debtTab = arg; renderPage(); break;
+    case 'debt-new': openDebt(null); break;
+    case 'debt': openDebtDetail(arg); break;
+    case 'dd': d.dir = arg; renderDebtForm(); break;
+    case 'debt-save': saveDebt(); break;
+    case 'debt-edit': openDebt(d.debt); break;
+    case 'debt-pay': {
+      const x = S.debts.find(z => z.id === d.debt), v = parseAmt(d.pay);
+      if (!(v > 0)) return toast('Summani kiriting');
+      x.pays = x.pays || []; x.pays.push({id:uid(), amount:Math.min(v, debtRem(x)), date:today()});
+      if (debtRem(x) <= 0) x.closed = true;
+      save(); openDebtDetail(x.id); renderPage(); renderView(); toast(x.closed ? 'Qarz toʻliq yopildi ✓' : 'Qoʻshildi ✓'); break;
+    }
+    case 'debt-unpay': { const x = S.debts.find(z => z.id === d.debt); x.pays = x.pays.filter(p => p.id !== arg); x.closed = debtRem(x) <= 0; save(); openDebtDetail(x.id); renderPage(); renderView(); break; }
+    case 'debt-close': { const x = S.debts.find(z => z.id === d.debt); const r = debtRem(x); if (r > 0) x.pays.push({id:uid(), amount:r, date:today()}); x.closed = true; save(); closeSheet(); renderPage(); renderView(); toast('Qarz yopildi ✓'); break; }
+    case 'debt-reopen': { const x = S.debts.find(z => z.id === d.debt); x.closed = false; save(); openDebtDetail(x.id); renderPage(); renderView(); break; }
+    case 'debt-del': if (await confirmBox('Oʻchirilsinmi?', 'Qarz yozuvi butunlay oʻchiriladi.', 'Oʻchirish', true)){ S.debts = S.debts.filter(z => z.id !== d.debt); save(); closeSheet(); renderPage(); renderView(); } break;
+    case 'debt-remind': {
+      const x = S.debts.find(z => z.id === d.debt);
+      shareText('Assalomu alaykum, ' + x.who + '! ' + shortDate(x.date) + ' kuni olgan qarzingiz boʻyicha eslatma: qoldiq ' + fmt(debtRem(x), x.cur) + '.' + (x.due ? ' Kelishilgan muddat — ' + shortDate(x.due) + '.' : '') + ' Rahmat!');
+      break;
+    }
+    // doimiy
+    case 'rec-new': openRec(null); break;
+    case 'rec': openRec(arg); break;
+    case 'rw': d.wallet = arg; $$('#sheet [data-act^="rw:"]').forEach(b => b.classList.toggle('on', b.dataset.act === a)); break;
+    case 'rc': d.cat = arg; $$('#sheet [data-act^="rc:"]').forEach(b => b.classList.toggle('on', b.dataset.act === a)); break;
+    case 'rec-save': saveRec(); break;
+    case 'rec-del': S.recurring = S.recurring.filter(r => r.id !== d.id); save(); closeSheet(); renderPage(); renderView(); break;
+    case 'rec-pay': payRec(arg); break;
+    // filtrlar
+    case 'hm': U.hMonth = arg === 'all' ? (U.hMonth === 'all' ? mkey(today()) : 'all') : shiftMonth(U.hMonth === 'all' ? mkey(today()) : U.hMonth, +arg); renderView(); break;
+    case 'hk': U.hKind = arg; renderView(); break;
+    case 'hw': U.hWallet = arg; renderView(); break;
+    case 'sm': U.sMonth = shiftMonth(U.sMonth, +arg); renderView(); break;
+    case 'sk': U.sKind = arg; renderView(); break;
+    // sozlamalar
+    case 'set-save': {
+      S.settings.name = $('#setName').value.trim();
+      const r = parseAmt($('#setRate').value); if (r > 0) S.settings.rate = r;
+      save(); renderView(); toast('Saqlandi ✓'); break;
+    }
+    case 'theme': S.settings.theme = arg; save(); applyTheme(); renderPage(); break;
+    case 'pin-set': setPin(); break;
+    case 'pin-off': if (await confirmBox('PIN-kod oʻchirilsinmi?', 'Ilova PIN-kodsiz ochiladi.', 'Oʻchirish', true)){ S.settings.pin = null; save(); renderPage(); toast('PIN-kod oʻchirildi'); } break;
+    case 'backup-share': shareFile('pulnoma-zaxira-' + today() + '.json', 'application/json', backupJSON()); break;
+    case 'backup-save': { let ok = false; try { ok = A.saveToDownloads('pulnoma-zaxira-' + today() + '.json', 'application/json', backupJSON()); } catch (e) {} toast(ok ? 'Yuklamalar/Pulnoma papkasiga saqlandi ✓' : 'Saqlab boʻlmadi — “yuborish”dan foydalaning'); break; }
+    case 'backup-restore': openRestore(); break;
+    case 'pick-file': $('#fileIn').click(); break;
+    case 'restore-paste': if (d && d.paste) restoreFrom(d.paste); else toast('Matnni qoʻying'); break;
+    case 'csv': shareFile('pulnoma-' + today() + '.csv', 'text/csv', csv()); break;
+    case 'wipe':
+      if (await confirmBox('Hammasi oʻchirilsinmi?', 'Barcha hamyonlar, yozuvlar, qarzlar va sozlamalar oʻchiriladi. Avval zaxira nusxa olishni maslahat beramiz.', 'Oʻchirish', true)){
+        localStorage.removeItem(KEY); S = null; U.page = []; $('#page').classList.remove('on'); $('#main').innerHTML = ''; U.view = 'home'; showOnb();
+      } break;
+  }
+});
+
+/* ============ ishga tushirish ============ */
+load();
+applyTheme();
+if (!S) showOnb();
+else { renderView(); if (S.settings.pin) showLock(); }
+</script>
+</body>
+</html>
