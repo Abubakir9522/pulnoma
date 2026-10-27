@@ -203,6 +203,44 @@ nav.bottom .fab span svg{transform:rotate(-45deg);width:26px;height:26px}
 .feat{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:8px 0}
 .feat i{font-style:normal;font-size:18px}
 .note-box{font-size:13px;color:var(--muted);background:var(--surface2);border-radius:14px;padding:10px 12px;margin-top:12px}
+/* ===== animatsiyalar ===== */
+:root{--ease:cubic-bezier(.2,.8,.2,1);--spring:cubic-bezier(.34,1.4,.64,1)}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes popIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes drift{from{background-position:0 0}to{background-position:112px 56px}}
+@keyframes shine{from{transform:translateX(-120%)}to{transform:translateX(120%)}}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.16)}100%{transform:scale(1)}}
+@keyframes tick{0%{transform:translateY(0)}35%{transform:translateY(-3px)}100%{transform:translateY(0)}}
+.anim{animation:rise .46s var(--ease) backwards}
+.pop{animation:popIn .32s var(--spring) backwards}
+.hero{animation:drift 60s linear infinite;cursor:pointer;transition:transform .2s var(--ease)}
+.hero.shine::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);animation:shine 1.5s .35s var(--ease) both;pointer-events:none}
+.hero:active{transform:scale(.985)}
+.hero-go{position:absolute;top:18px;right:18px;font-size:12px;font-weight:700;background:rgba(255,255,255,.16);padding:5px 10px;border-radius:20px}
+.hero-row>div{transition:background .2s}
+.hero-row>div:active{background:rgba(255,255,255,.24)}
+button,.tx,.wcard,.cat,.chip{transition:transform .16s var(--ease),background-color .2s,border-color .2s,color .2s,box-shadow .2s}
+button:active,.tx:active,.wcard:active{transform:scale(.965)}
+.keypad button:active{transform:scale(.92);background:var(--brand-soft)}
+.keypad .ok:active{background:var(--brand2)}
+nav.bottom button.on svg{animation:bump .4s var(--spring)}
+nav.bottom .fab span{transition:transform .3s var(--spring),box-shadow .3s}
+nav.bottom .fab:active span{transform:rotate(135deg) scale(.92)}
+.amt-disp .v.bump{animation:tick .16s var(--ease)}
+.mbox{animation:popIn .26s var(--spring)}
+#modal.on{animation:fadeIn .18s ease}
+#toast{transition:opacity .25s,transform .35s var(--spring)}
+.bar i{transition:width .9s var(--ease)}
+.bars i{transition:height .7s var(--ease)}
+.donut-seg{transition:stroke-dasharray 1s var(--ease)}
+.trend-line{transition:stroke-dashoffset 1.4s var(--ease)}
+.trend-area{transition:opacity 1s .5s ease}
+.trend-dot{transition:opacity .3s 1.2s, transform .4s 1.2s var(--spring);transform-box:fill-box;transform-origin:center}
+.cat.on .ci,.chip.on{animation:bump .3s var(--spring)}
+.trend{display:block;width:100%;height:auto;overflow:visible}
+.trend-cap{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:2px}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -368,6 +406,37 @@ const I = {
   star: '<svg viewBox="0 0 48 48"><g fill="#f0b54a"><rect x="13" y="13" width="22" height="22" rx="2"/><rect x="13" y="13" width="22" height="22" rx="2" transform="rotate(45 24 24)"/></g><circle cx="24" cy="24" r="6.5" fill="#0f766e"/></svg>'
 };
 
+/* ============ animatsiya yordamchilari ============ */
+const RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+function haptic(){ try { if (A && A.tap) A.tap(); } catch (e) {} }
+function stagger(root, sel, step, cls){
+  if (RM || !root) return;
+  $$(sel || '.top, .hero, .sec-h, .wcard, .card, .day-h, .tx, .month-sw, .seg, .search, .hscroll, .empty', root).slice(0, 24).forEach((el, i) => {
+    el.classList.add(cls || 'anim'); el.style.animationDelay = (i * (step || 34)) + 'ms';
+  });
+}
+function settle(root){
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $$('[data-w]', root).forEach(e => e.style.width = e.dataset.w);
+    $$('[data-h]', root).forEach(e => e.style.height = e.dataset.h);
+    $$('[data-da]', root).forEach(e => e.style.strokeDasharray = e.dataset.da);
+    $$('.trend-line', root).forEach(e => e.style.strokeDashoffset = '0');
+    $$('.trend-area', root).forEach(e => e.style.opacity = '1');
+    $$('.trend-dot', root).forEach(e => { e.style.opacity = '1'; e.style.transform = 'scale(1)'; });
+  }));
+}
+function countUp(el, from, to, cur){
+  if (!el) return;
+  if (RM || S.settings.hide || Math.abs(from - to) < 1){ el.textContent = fmtB(to, cur); return; }
+  const t0 = performance.now(), dur = 950;
+  function step(now){
+    const p = Math.min((now - t0) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(from + (to - from) * e, cur);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 /* ============ toast / modal ============ */
 let toastT = null;
 function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.toggle('top', !!U.sheet); t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 2200); }
@@ -385,10 +454,12 @@ function confirmBox(title, text, okLabel, danger){
 
 /* ============ sheet / page ============ */
 function openSheet(html, mount){
-  const sh = $('#sheet');
+  const sh = $('#sheet'), fresh = !U.sheet;
   sh.innerHTML = html;
   sh.classList.add('on'); $('#scrim').classList.add('on');
   U.sheet = true;
+  if (fresh) stagger(sh, '.cat, .chip, .field, .emoji-grid button, .color-row button, .sh-body > .btn', 12, 'pop');
+  settle(sh);
   if (mount) mount(sh);
 }
 function closeSheet(){
@@ -397,7 +468,7 @@ function closeSheet(){
   setTimeout(() => { if (!U.sheet) $('#sheet').innerHTML = ''; }, 260);
 }
 function sheetHead(title){ return '<div class="sh-head"><h3>' + esc(title) + '</h3><button class="close" data-act="close-sheet" aria-label="Yopish">' + I.x + '</button></div>'; }
-function openPage(name){ U.page.push(name); renderPage(); $('#page').classList.add('on'); $('#page').scrollTop = 0; }
+function openPage(name){ U.page.push(name); renderPage(true); $('#page').classList.add('on'); $('#page').scrollTop = 0; haptic(); }
 function closePage(){
   U.page.pop();
   if (U.page.length) renderPage();
@@ -416,15 +487,22 @@ window.handleBack = function(){
 };
 
 /* ============ ko'rinishlar ============ */
-function setView(v){ U.view = v; renderView(); window.scrollTo(0, 0); }
-function renderView(){
+function setView(v){ U.view = v; renderView(true); window.scrollTo(0, 0); haptic(); }
+function renderView(anim){
   if (!S) return;
   $$('#nav [data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === U.view));
   const m = $('#main');
-  if (U.view === 'home') m.innerHTML = vHome();
+  if (U.view === 'home'){
+    const total = totalUZS(balances()), from = U.lastTotal == null ? 0 : U.lastTotal;
+    m.innerHTML = vHome(anim, from);
+    countUp($('#heroAmt'), from, total);
+    U.lastTotal = total;
+  }
   else if (U.view === 'history'){ m.innerHTML = vHistory(); renderHistList(); }
   else if (U.view === 'stats') m.innerHTML = vStats();
   else m.innerHTML = vMore();
+  if (anim) stagger(m);
+  settle(m);
 }
 function txRow(t){
   const w = W(t.wallet) || {name:'?', cur:'UZS'};
@@ -462,18 +540,42 @@ function recurringStatus(r){
   const day = Math.min(r.day, daysInMonth(mk));
   return {paid:false, days: day - parseD(t).getDate(), date: mk + '-' + pad(day)};
 }
-function vHome(){
+function daysSince(ds){ return ds ? Math.round((parseD(today()) - parseD(ds)) / 864e5) : null; }
+function trendCard(){
+  const N = 30, now = totalUZS(balances()), net = {};
+  S.tx.forEach(t => { if (t.kind !== 'tr') net[t.date] = (net[t.date] || 0) + (t.kind === 'in' ? 1 : -1) * txUZS(t); });
+  const pts = []; let v = now; const d = new Date();
+  for (let i = 0; i <= N; i++){ pts.unshift(v); v -= net[dstr(d)] || 0; d.setDate(d.getDate() - 1); }
+  const mn = Math.min.apply(null, pts), mx = Math.max.apply(null, pts), Wd = 300, H = 84, pd = 8;
+  const x = i => (i / N * Wd).toFixed(1), y = p => (mx === mn ? H / 2 : pd + (1 - (p - mn) / (mx - mn)) * (H - 2 * pd)).toFixed(1);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + x(i) + ' ' + y(p)).join(' ');
+  const ch = now - pts[0];
+  const start = new Date(); start.setDate(start.getDate() - N);
+  return '<div class="card" data-act="view:stats" style="cursor:pointer"><div class="tile-row" style="justify-content:space-between;margin-bottom:8px"><h4 style="margin:0">Balans dinamikasi</h4><span class="pill ' + (ch >= 0 ? 'ok' : 'red') + ' num">' + (S.settings.hide ? '30 kun' : (ch >= 0 ? '+' : '') + fmtK(ch) + ' · 30 kun') + '</span></div>' +
+    '<svg class="trend" viewBox="-6 -6 312 96" aria-label="Soʻnggi 30 kunlik balans grafigi"><defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--brand);stop-opacity:.3"/><stop offset="1" style="stop-color:var(--brand);stop-opacity:0"/></linearGradient></defs>' +
+    '<line x1="0" x2="300" y1="' + H + '" y2="' + H + '" style="stroke:var(--line);stroke-width:1"/>' +
+    '<path class="trend-area" d="' + line + ' L300 ' + H + ' L0 ' + H + ' Z" style="fill:url(#tg);opacity:0"/>' +
+    '<path class="trend-line" d="' + line + '" pathLength="1" style="fill:none;stroke:var(--brand);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1"/>' +
+    '<circle class="trend-dot" cx="300" cy="' + y(now) + '" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2.5;opacity:0;transform:scale(.2)"/></svg>' +
+    '<div class="trend-cap"><span>' + shortDate(dstr(start)) + '</span><span>Bugun</span></div></div>';
+}
+function vHome(anim, from){
   const b = balances(), total = totalUZS(b), mk = mkey(today());
   const inc = monthSum(mk, 'in'), out = monthSum(mk, 'out');
-  const name = S.settings.name;
-  let h = '<header class="top"><div><div class="hello">Assalomu alaykum' + (name ? ', ' + esc(name) : '') + '!</div><div class="sub">' + dayLabel(today()).replace('Bugun', 'Bugun, ' + parseD(today()).getDate() + ' ' + MONTHS[parseD(today()).getMonth()].toLowerCase()) + '</div></div>' +
+  const name = S.settings.name, mon = MONTHS[parseD(today()).getMonth()].toLowerCase();
+  let h = '<header class="top"><div><div class="hello">Assalomu alaykum' + (name ? ', ' + esc(name) : '') + '!</div><div class="sub">Bugun, ' + parseD(today()).getDate() + ' ' + mon + ', ' + WD[new Date().getDay()].toLowerCase() + '</div></div>' +
     '<button class="icon-btn" data-act="hide" aria-label="Balansni yashirish">' + (S.settings.hide ? I.eyeOff : I.eye) + '</button></header>';
-  h += '<section class="hero"><div class="hero-lbl">Umumiy balans</div><div class="hero-amt num">' + fmtB(total) + '</div>' +
+  h += '<section class="hero' + (anim ? ' shine' : '') + '" data-act="go-hist:all-out"><span class="hero-go">Xarajatlar ›</span><div class="hero-lbl">Umumiy balans</div><div class="hero-amt num" id="heroAmt">' + fmtB(from == null ? total : from) + '</div>' +
     '<div class="hero-usd num">≈ ' + fmtB(total / rate(), 'USD') + ' · kurs ' + grp(rate()) + '</div>' +
-    '<div class="hero-row"><div>↓ Kirim, ' + MONTHS[parseD(today()).getMonth()].toLowerCase() + '<b class="num">' + fmtB(inc) + '</b></div><div>↑ Chiqim, ' + MONTHS[parseD(today()).getMonth()].toLowerCase() + '<b class="num">' + fmtB(out) + '</b></div></div></section>';
+    '<div class="hero-row"><div data-act="go-hist:in">↓ Kirim, ' + mon + '<b class="num">' + fmtB(inc) + '</b></div><div data-act="go-hist:out">↑ Chiqim, ' + mon + '<b class="num">' + fmtB(out) + '</b></div></div></section>';
   h += '<div class="sec-h"><h3>Hamyonlar</h3><button class="link" data-act="page:wallets">Boshqarish</button></div><div class="wallets">';
-  S.wallets.forEach(w => { h += '<button class="wcard" style="--wc:' + w.color + '" data-act="wallet:' + w.id + '"><div class="wi">' + w.icon + '</div><div class="wn">' + esc(w.name) + '</div><div class="wb num">' + fmtB(b[w.id] || 0, w.cur) + '</div></button>'; });
+  S.wallets.forEach(w => { h += '<button class="wcard" style="--wc:' + w.color + '" data-act="go-hist:w:' + w.id + '"><div class="wi">' + w.icon + '</div><div class="wn">' + esc(w.name) + '</div><div class="wb num">' + fmtB(b[w.id] || 0, w.cur) + '</div></button>'; });
   h += '<button class="wcard add" data-act="wallet-new">+ Hamyon</button></div>';
+  if (S.tx.length >= 3) h += '<div style="height:12px"></div>' + trendCard();
+  const lb = daysSince(S.settings.lastBackup);
+  if (S.tx.length >= 10 && (lb == null || lb >= 7)){
+    h += '<div class="card" style="margin-top:12px"><div class="tile-row"><div class="tile-ico" style="background:var(--brand-soft)">☁️</div><div style="flex:1;min-width:0"><div style="font-weight:600">Zaxira nusxa oling</div><div class="sub">' + (lb == null ? 'Hali bir marta ham saqlanmagan' : 'Oxirgisi ' + lb + ' kun oldin') + '</div></div><button class="small-btn" data-act="backup-drive">Google Drive</button></div></div>';
+  }
 
   // byudjet ogohlantirishi
   const alerts = S.budgets.map(bg => ({bg, spent: monthSum(mk, 'out', bg.cat === 'all' ? null : bg.cat)})).filter(x => x.spent >= x.bg.limit * 0.8);
@@ -504,6 +606,10 @@ function vHome(){
 function vHistory(){
   if (!U.hMonth) U.hMonth = mkey(today());
   let h = '<header class="top"><h1>Tarix</h1></header>';
+  const fw = U.hWallet !== 'all' ? W(U.hWallet) : null;
+  if (fw){
+    h += '<div class="card"><div class="tile-row"><div class="tile-ico" style="background:' + fw.color + '22">' + fw.icon + '</div><div style="flex:1;min-width:0"><div class="sub">' + esc(fw.name) + '</div><b class="num" style="font-size:20px">' + fmtB(balances()[fw.id] || 0, fw.cur) + '</b></div><button class="small-btn ghost" data-act="wallet:' + fw.id + '">Tahrirlash</button></div></div>';
+  }
   h += '<div class="search">' + I.search + '<input id="q" placeholder="Izoh yoki kategoriya boʻyicha qidirish" value="' + esc(U.q) + '" data-bind="q"></div>';
   h += '<div class="month-sw"><button data-act="hm:-1" aria-label="Oldingi oy">‹</button><b>' + (U.hMonth === 'all' ? 'Barcha vaqt' : monthLabel(U.hMonth)) + '</b><button data-act="hm:1" aria-label="Keyingi oy">›</button></div>';
   h += '<div class="hscroll">' + [['all','Hammasi'],['out','Chiqim'],['in','Kirim'],['tr','Oʻtkazma']].map(k => '<button class="chip' + (U.hKind === k[0] ? ' on' : '') + '" data-act="hk:' + k[0] + '">' + k[1] + '</button>').join('') +
@@ -530,10 +636,11 @@ function donut(parts, total){
   let off = 0, segs = '';
   parts.forEach(p => {
     const len = total ? p.v / total * Cc : 0;
-    if (len > 0.5) segs += '<circle cx="60" cy="60" r="' + r + '" fill="none" stroke="' + p.color + '" stroke-width="16" stroke-dasharray="' + Math.max(len - 1.2, 0.3).toFixed(2) + ' ' + (Cc - Math.max(len - 1.2, 0.3)).toFixed(2) + '" stroke-dashoffset="' + (-off).toFixed(2) + '"/>';
+    const L = Math.max(len - 1.2, 0.3);
+    if (len > 0.5) segs += '<circle class="donut-seg" cx="60" cy="60" r="' + r + '" style="fill:none;stroke:' + p.color + ';stroke-width:16;stroke-dasharray:0 ' + Cc.toFixed(2) + ';stroke-dashoffset:' + (-off).toFixed(2) + '" data-da="' + L.toFixed(2) + ' ' + (Cc - L).toFixed(2) + '"/>';
     off += len;
   });
-  return '<svg width="190" height="190" viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="' + r + '" fill="none" stroke="var(--surface2)" stroke-width="16"/>' + segs + '</svg>';
+  return '<svg width="190" height="190" viewBox="0 0 120 120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="' + r + '" style="fill:none;stroke:var(--surface2);stroke-width:16"/>' + segs + '</svg>';
 }
 function vStats(){
   if (!U.sMonth) U.sMonth = mkey(today());
@@ -559,13 +666,13 @@ function vStats(){
     h += '<div class="card"><h4>Kategoriyalar boʻyicha</h4><div class="donut-wrap">' + donut(parts, total) + '<div class="donut-c"><b class="num">' + fmtK(total) + '</b><span>soʻm</span></div></div><div class="legend">';
     parts.forEach(p => {
       const pc = Math.round(p.v / total * 1000) / 10;
-      h += '<div class="li"><div class="tile-ico" style="background:' + p.color + '22;width:36px;height:36px;flex-basis:36px;font-size:18px;border-radius:12px">' + p.icon + '</div><div class="nm"><div>' + esc(p.name) + '</div><div class="bar" style="margin-top:5px;height:6px"><i style="width:' + pc + '%;background:' + p.color + '"></i></div></div><div style="text-align:right"><div class="num" style="font-weight:700;font-size:14px">' + fmt(p.v) + '</div><div class="pc">' + pc + '%</div></div></div>';
+      h += '<div class="li"><div class="tile-ico" style="background:' + p.color + '22;width:36px;height:36px;flex-basis:36px;font-size:18px;border-radius:12px">' + p.icon + '</div><div class="nm"><div>' + esc(p.name) + '</div><div class="bar" style="margin-top:5px;height:6px"><i style="width:0;background:' + p.color + '" data-w="' + pc + '%"></i></div></div><div style="text-align:right"><div class="num" style="font-weight:700;font-size:14px">' + fmt(p.v) + '</div><div class="pc">' + pc + '%</div></div></div>';
     });
     h += '</div></div>';
     const days = new Array(nd).fill(0);
     S.tx.forEach(t => { if (t.kind === kind && mkey(t.date) === mk) days[parseD(t.date).getDate() - 1] += txUZS(t); });
     const mx = Math.max.apply(null, days) || 1, td = isCur ? parseD(today()).getDate() : -1;
-    h += '<div class="card"><h4>Kunlar boʻyicha</h4><div class="bars">' + days.map((v, i) => '<i class="' + (i + 1 === td ? 'td' : v ? 'has' : '') + '" style="height:' + Math.max(v / mx * 100, 2) + '%" title="' + (i + 1) + ': ' + fmt(v) + '"></i>').join('') + '</div><div class="bars-x"><span>1</span><span>10</span><span>20</span><span>' + nd + '</span></div><div class="sub" style="margin-top:8px">Eng koʻp: ' + (days.indexOf(mx) + 1) + '-kun, <b class="num">' + fmt(mx) + '</b></div></div>';
+    h += '<div class="card"><h4>Kunlar boʻyicha</h4><div class="bars">' + days.map((v, i) => '<i class="' + (i + 1 === td ? 'td' : v ? 'has' : '') + '" style="height:2%;transition-delay:' + (i * 14) + 'ms" data-h="' + Math.max(v / mx * 100, 2).toFixed(1) + '%" title="' + (i + 1) + ': ' + fmt(v) + '"></i>').join('') + '</div><div class="bars-x"><span>1</span><span>10</span><span>20</span><span>' + nd + '</span></div><div class="sub" style="margin-top:8px">Eng koʻp: ' + (days.indexOf(mx) + 1) + '-kun, <b class="num">' + fmt(mx) + '</b></div></div>';
   }
   if (kind === 'out'){
     h += '<div class="card"><h4>Byudjetlar</h4>' + (S.budgets.length ? budgetRows(mk, 3) : '<div class="sub">Oylik limit qoʻying — oshib ketsa, ilova ogohlantiradi.</div>') + '<button class="btn sec" style="margin-top:12px" data-act="page:budgets">' + (S.budgets.length ? 'Barcha byudjetlar' : 'Byudjet qoʻyish') + '</button></div>';
@@ -581,7 +688,7 @@ function budgetRows(mk, limit){
     const left = bg.limit - spent;
     const isCur = mk === mkey(today());
     const dleft = isCur ? daysInMonth(mk) - parseD(today()).getDate() + 1 : 0;
-    h += '<div style="padding:10px 0;border-top:1px solid var(--line)" ' + (limit ? '' : 'data-act="budget:' + bg.id + '"') + '><div class="tile-row" style="margin-bottom:8px"><div class="tile-ico" style="background:' + c.color + '22;width:36px;height:36px;flex-basis:36px;font-size:18px;border-radius:12px">' + c.icon + '</div><div style="flex:1;min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(c.name) + '</div><div class="sub num">' + fmt(spent) + ' / ' + fmt(bg.limit) + '</div></div><span class="pill ' + (cls === 'over' ? 'red' : cls === 'warn' ? 'warn' : 'ok') + '">' + Math.round(pc) + '%</span></div><div class="bar"><i class="' + cls + '" style="width:' + Math.min(pc, 100) + '%"></i></div>' +
+    h += '<div style="padding:10px 0;border-top:1px solid var(--line)" ' + (limit ? '' : 'data-act="budget:' + bg.id + '"') + '><div class="tile-row" style="margin-bottom:8px"><div class="tile-ico" style="background:' + c.color + '22;width:36px;height:36px;flex-basis:36px;font-size:18px;border-radius:12px">' + c.icon + '</div><div style="flex:1;min-width:0"><div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(c.name) + '</div><div class="sub num">' + fmt(spent) + ' / ' + fmt(bg.limit) + '</div></div><span class="pill ' + (cls === 'over' ? 'red' : cls === 'warn' ? 'warn' : 'ok') + '">' + Math.round(pc) + '%</span></div><div class="bar"><i class="' + cls + '" style="width:0" data-w="' + Math.min(pc, 100).toFixed(1) + '%"></i></div>' +
       (!limit ? '<div class="sub" style="margin-top:6px">' + (left >= 0 ? 'Qoldi: <b class="num">' + fmt(left) + '</b>' + (dleft > 0 ? ' · kuniga ~<b class="num">' + fmt(left / dleft) + '</b>' : '') : '<span style="color:var(--danger)">Limitdan <b class="num">' + fmt(-left) + '</b> oshdi</span>') + '</div>' : '') + '</div>';
   });
   return h;
@@ -600,7 +707,7 @@ function vMore(){
 }
 
 /* ============ sahifalar ============ */
-function renderPage(){
+function renderPage(anim){
   const p = U.page[U.page.length - 1], el = $('#page');
   let h = '';
   if (p === 'wallets'){
@@ -651,9 +758,14 @@ function renderPage(){
       '<label class="field"><span>Dollar kursi (1 $ = … soʻm)</span><input id="setRate" inputmode="decimal" value="' + S.settings.rate + '"></label><button class="btn pri" style="margin-top:12px" data-act="set-save">Saqlash</button></div>';
     h += '<div class="card"><h4>Mavzu</h4><div class="seg"><button class="' + (th === 'auto' ? 'on' : '') + '" data-act="theme:auto">Avto</button><button class="' + (th === 'light' ? 'on' : '') + '" data-act="theme:light">Yorugʻ</button><button class="' + (th === 'dark' ? 'on' : '') + '" data-act="theme:dark">Qorongʻi</button></div></div>';
     h += '<div class="card"><h4>Xavfsizlik</h4><div class="sub" style="margin-bottom:10px">PIN-kod oʻrnatilsa, ilova ochilganda soʻraladi.</div>' + (S.settings.pin ? '<button class="btn sec" data-act="pin-set">PIN-kodni oʻzgartirish</button><button class="btn dng" data-act="pin-off">PIN-kodni oʻchirish</button>' : '<button class="btn sec" data-act="pin-set">🔒 PIN-kod oʻrnatish</button>') + '</div>';
-    h += '<div class="card"><h4>Zaxira nusxa</h4><div class="sub" style="margin-bottom:10px">Maʼlumotlar faqat shu telefonda saqlanadi. Telefon almashtirishdan oldin zaxira nusxani Telegram yoki Google Drive’ga yuboring.</div>' +
-      '<button class="btn pri" data-act="backup-share">📤 Zaxira nusxani yuborish</button>' + (A ? '<button class="btn sec" data-act="backup-save">💾 Yuklamalar papkasiga saqlash</button>' : '') +
-      '<button class="btn sec" data-act="backup-restore">📥 Zaxiradan tiklash</button><button class="btn sec" data-act="csv">📑 Excel uchun eksport (CSV)</button></div>';
+    const lb = daysSince(S.settings.lastBackup);
+    h += '<div class="card"><h4>Google zaxira</h4><div class="sub" style="margin-bottom:10px">Zaxira nusxani Google Drive’ga saqlang — telefon almashtirsangiz yoki ilovani qayta oʻrnatsangiz, oʻsha fayldan tiklaysiz. ' +
+      (lb == null ? 'Hali zaxira olinmagan.' : 'Oxirgi zaxira: <b>' + (lb === 0 ? 'bugun' : lb + ' kun oldin') + '</b>.') + '</div>' +
+      '<button class="btn pri" data-act="backup-drive">☁️ Google Drive’ga saqlash</button>' +
+      '<button class="btn sec" data-act="backup-restore">📥 Drive’dan yoki fayldan tiklash</button>' +
+      '<div class="note-box">Bundan tashqari, Android ilova maʼlumotlarini Google hisobingizga oʻzi ham zaxiralaydi (telefon sozlamalarida <b>Google zaxira</b> yoqilgan boʻlsa). Yangi telefonda ilova oʻrnatilganda maʼlumotlar odatda avtomatik qaytadi.</div></div>';
+    h += '<div class="card"><h4>Boshqa eksport</h4><button class="btn sec" data-act="backup-share">📤 Telegram yoki boshqa ilovaga yuborish</button>' + (A ? '<button class="btn sec" data-act="backup-save">💾 Yuklamalar papkasiga saqlash</button>' : '') +
+      '<button class="btn sec" data-act="csv">📑 Excel uchun eksport (CSV)</button></div>';
     h += '<div class="card"><h4>Xavfli hudud</h4><button class="btn dng" data-act="wipe">Barcha maʼlumotlarni oʻchirish</button></div>';
   } else if (p === 'about'){
     h = pageHead('Ilova haqida') + '<div class="card" style="text-align:center"><div class="logo" style="margin:6px auto 10px">' + I.star + '</div><h2 style="margin:0">Pulnoma</h2><div class="sub">Versiya 1.0 · oʻzbek tilida</div></div>' +
@@ -667,6 +779,8 @@ function renderPage(){
       ].map(f => '<div class="feat"><i>' + f[0] + '</i><div>' + f[1] + '</div></div>').join('') + '</div>';
   }
   el.innerHTML = h;
+  if (anim) stagger(el, '.card, .tx, .seg, .sec-h, .empty, .mi', 30);
+  settle(el);
 }
 function debtRem(d){ return d.amount - (d.pays || []).reduce((s, p) => s + p.amount, 0); }
 function debtTotals(){
@@ -722,7 +836,9 @@ function convertAmt(v, from, to){
 }
 function keypad(k){
   const d = U.draft;
+  haptic();
   if (k === 'ok') return saveTx();
+  const av = $('#amtV'); if (av){ av.classList.remove('bump'); void av.offsetWidth; av.classList.add('bump'); }
   if (k === '⌫') d.amt = d.amt.slice(0, -1);
   else if (k === 'C') d.amt = '';
   else if (k === '.'){ if (!d.amt.includes('.')) d.amt = (d.amt || '0') + '.'; }
@@ -1068,9 +1184,9 @@ function showOnb(){
     S = defState();
     S.settings.name = $('#oName').value.trim();
     S.wallets[0].start = parseAmt($('#oCash').value); S.wallets[1].start = parseAmt($('#oCard').value); S.wallets[2].start = parseAmt($('#oUsd').value);
-    save(); o.classList.remove('on'); applyTheme(); renderView();
+    save(); o.classList.remove('on'); applyTheme(); renderView(true);
   };
-  $('#oDemo').onclick = () => { S = demoData(); save(); o.classList.remove('on'); applyTheme(); renderView(); toast('Namuna yuklandi. Sozlamalardan tozalash mumkin'); };
+  $('#oDemo').onclick = () => { S = demoData(); save(); o.classList.remove('on'); applyTheme(); renderView(true); toast('Namuna yuklandi. Sozlamalardan tozalash mumkin'); };
   $('#oRestore').onclick = () => { $('#fileIn').click(); };
 }
 
@@ -1092,7 +1208,7 @@ document.addEventListener('click', async e => {
   switch (cmd){
     case 'view': if (U.page.length){ U.page = []; $('#page').classList.remove('on'); } setView(arg); break;
     case 'page': openPage(arg); break;
-    case 'page-back': closePage(); break;
+    case 'page-back': closePage(); haptic(); break;
     case 'close-sheet': if (U.catReturn){ const b = U.catReturn; U.catReturn = null; U.draft = b; renderTx(); } else closeSheet(); break;
     case 'hide': S.settings.hide = !S.settings.hide; save(); renderView(); break;
     // tranzaksiya
@@ -1195,8 +1311,22 @@ document.addEventListener('click', async e => {
     case 'theme': S.settings.theme = arg; save(); applyTheme(); renderPage(); break;
     case 'pin-set': setPin(); break;
     case 'pin-off': if (await confirmBox('PIN-kod oʻchirilsinmi?', 'Ilova PIN-kodsiz ochiladi.', 'Oʻchirish', true)){ S.settings.pin = null; save(); renderPage(); toast('PIN-kod oʻchirildi'); } break;
-    case 'backup-share': shareFile('pulnoma-zaxira-' + today() + '.json', 'application/json', backupJSON()); break;
-    case 'backup-save': { let ok = false; try { ok = A.saveToDownloads('pulnoma-zaxira-' + today() + '.json', 'application/json', backupJSON()); } catch (e) {} toast(ok ? 'Yuklamalar/Pulnoma papkasiga saqlandi ✓' : 'Saqlab boʻlmadi — “yuborish”dan foydalaning'); break; }
+    case 'backup-drive': {
+      const nm = 'pulnoma-zaxira-' + today() + '.json', js = backupJSON();
+      let ok = false;
+      if (A && A.saveToDrive){ try { ok = A.saveToDrive(nm, 'application/json', js); } catch (e) {} }
+      if (!ok){ if (A) toast('Google Drive ilovasi topilmadi — roʻyxatdan tanlang'); shareFile(nm, 'application/json', js); }
+      S.settings.lastBackup = today(); save(); renderView(); if (U.page.length) renderPage();
+      break;
+    }
+    case 'backup-share': shareFile('pulnoma-zaxira-' + today() + '.json', 'application/json', backupJSON()); S.settings.lastBackup = today(); save(); break;
+    case 'backup-save': { let ok = false; try { ok = A.saveToDownloads('pulnoma-zaxira-' + today() + '.json', 'application/json', backupJSON()); } catch (e) {} if (ok){ S.settings.lastBackup = today(); save(); } toast(ok ? 'Yuklamalar/Pulnoma papkasiga saqlandi ✓' : 'Saqlab boʻlmadi — “yuborish”dan foydalaning'); break; }
+    case 'go-hist':
+      U.q = ''; U.hWallet = 'all';
+      if (arg.indexOf('w:') === 0){ U.hWallet = arg.slice(2); U.hKind = 'all'; U.hMonth = 'all'; }
+      else if (arg === 'all-out'){ U.hKind = 'out'; U.hMonth = 'all'; }
+      else { U.hKind = arg; U.hMonth = mkey(today()); }
+      setView('history'); break;
     case 'backup-restore': openRestore(); break;
     case 'pick-file': $('#fileIn').click(); break;
     case 'restore-paste': if (d && d.paste) restoreFrom(d.paste); else toast('Matnni qoʻying'); break;
@@ -1212,7 +1342,7 @@ document.addEventListener('click', async e => {
 load();
 applyTheme();
 if (!S) showOnb();
-else { renderView(); if (S.settings.pin) showLock(); }
+else { renderView(true); if (S.settings.pin) showLock(); }
 </script>
 </body>
 </html>

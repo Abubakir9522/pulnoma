@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.Window;
 import android.webkit.JavascriptInterface;
@@ -181,33 +182,65 @@ public class MainActivity extends Activity {
             });
         }
 
+        private Uri writeShareFile(String name, String content) throws Exception {
+            String fn = safeName(name);
+            File dir = new File(getCacheDir(), "share");
+            if (!dir.exists()) dir.mkdirs();
+            FileOutputStream out = new FileOutputStream(new File(dir, fn));
+            out.write(content.getBytes(StandardCharsets.UTF_8));
+            out.close();
+            return Uri.parse("content://" + ShareProvider.AUTHORITY + "/" + fn);
+        }
+
+        private Intent sendIntent(String name, String mime, Uri uri) {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType(mime);
+            i.putExtra(Intent.EXTRA_STREAM, uri);
+            i.putExtra(Intent.EXTRA_SUBJECT, safeName(name));
+            i.putExtra(Intent.EXTRA_TITLE, safeName(name));
+            i.setClipData(ClipData.newRawUri(safeName(name), uri));
+            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            return i;
+        }
+
         @JavascriptInterface
-        public void shareFile(String name, final String mime, String content) {
+        public void tap() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    web.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void shareFile(final String name, final String mime, String content) {
             try {
-                final String fn = safeName(name);
-                File dir = new File(getCacheDir(), "share");
-                if (!dir.exists()) dir.mkdirs();
-                File f = new File(dir, fn);
-                FileOutputStream out = new FileOutputStream(f);
-                out.write(content.getBytes(StandardCharsets.UTF_8));
-                out.close();
-                final Uri uri = Uri.parse("content://" + ShareProvider.AUTHORITY + "/" + fn);
+                final Uri uri = writeShareFile(name, content);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Intent i = new Intent(Intent.ACTION_SEND);
-                        i.setType(mime);
-                        i.putExtra(Intent.EXTRA_STREAM, uri);
-                        i.putExtra(Intent.EXTRA_SUBJECT, fn);
-                        i.setClipData(ClipData.newRawUri(fn, uri));
-                        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         try {
-                            startActivity(Intent.createChooser(i, "Yuborish"));
+                            startActivity(Intent.createChooser(sendIntent(name, mime, uri), "Yuborish"));
                         } catch (Exception ignored) {
                         }
                     }
                 });
             } catch (Exception ignored) {
+            }
+        }
+
+        /** Faylni to'g'ridan-to'g'ri Google Drive ilovasiga yuboradi ("Drive'ga saqlash" oynasi ochiladi). */
+        @JavascriptInterface
+        public boolean saveToDrive(String name, String mime, String content) {
+            try {
+                Uri uri = writeShareFile(name, content);
+                Intent i = sendIntent(name, mime, uri);
+                i.setPackage("com.google.android.apps.docs");
+                startActivity(i);
+                return true;
+            } catch (Exception e) {
+                return false;
             }
         }
 

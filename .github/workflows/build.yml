@@ -34,9 +34,9 @@ jobs:
         run: gradle assembleRelease --no-daemon --stacktrace
 
       - name: Nomini o'zgartirish
-        run: cp app/build/outputs/apk/release/app-release.apk Pulnoma-1.0.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Pulnoma.apk
 
       - uses: actions/upload-artifact@v4
         with:
           name: Pulnoma-APK
-          path: Pulnoma-1.0.apk
+          path: Pulnoma.apk

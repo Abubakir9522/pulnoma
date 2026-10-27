@@ -10,8 +10,8 @@ android {
         applicationId 'uz.mojal.pulnoma'
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName '1.0'
+        versionCode 2
+        versionName '1.1'
     }
 
     // Imzo kaliti GitHub Secrets orqali beriladi (repozitoriyda saqlanmaydi).
